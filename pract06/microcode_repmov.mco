@@ -1,0 +1,42 @@
+[Microcode]
+;uAR |Label |ALU   |S1    |S2    |Dest  |ExtIR |Const |JCond |Adr   |Mem   |MAdr  |MDest |Regs
+0000 |Fetch |      |      |      |      |      |      |Mbusy |Fetch |RW    |PC    |IR    |      
+0001 |      |ADD   |PC    |Const |PC    |      |4     |Jump1 |      |      |      |      |RR    
+0002 |Halt  |      |      |      |      |      |      |True  |Halt  |      |      |      |      
+0003 |LdSt  |ADD   |A     |IR    |MAR   |Word  |      |Jump2 |      |      |      |      |      
+0004 |Brge  |S1    |A     |      |      |      |      |LT    |Fetch |      |      |      |      
+0005 |Jump  |ADD   |PC    |IR    |PC    |Word  |      |True  |Fetch |      |      |      |      
+0006 |Add   |ADD   |A     |B     |C     |      |      |      |      |      |      |      |      
+0007 |Wb    |      |      |      |      |      |      |True  |Fetch |      |      |      |WF3   
+0008 |Addi  |ADD   |A     |IR    |C     |Word  |      |True  |Wb2   |      |      |      |      
+0009 |Load  |      |      |      |      |      |      |Mbusy |Load  |RW    |MAR   |MDR   |      
+000A |      |S1    |MDR   |      |C     |      |      |      |      |      |      |      |      
+000B |Wb2   |      |      |      |      |      |      |True  |Fetch |      |      |      |WF2   
+000C |Store |S2    |      |B     |MDR   |      |      |      |      |      |      |      |      
+000D |Store2|      |      |      |      |      |      |Mbusy |Store2|WW    |MAR   |      |      
+000E |      |      |      |      |      |      |      |True  |Fetch |      |      |      |      
+000F |Mult  |MUL   |A     |B     |C     |      |      |True  |Wb    |      |      |      |      
+0010 |Sub   |SUB   |A     |B     |C     |      |      |True  |Wb    |      |      |      |      
+0011 |Brle  |S1    |A     |      |      |      |      |GT    |Fetch |      |      |      |      
+0012 |      |ADD   |PC    |IR    |PC    |Word  |      |True  |Fetch |      |      |      |      
+0013 |Mac   |      |      |      |      |      |      |      |      |      |      |      |      
+0014 |Dbrge |      |      |      |      |      |      |      |      |      |      |      |      
+0015 |Repmov|      |      |      |      |      |      |      |      |      |      |      |      
+
+[Jump Tables]
+;Opcode  |Jump Table 1 |Jump Table 2 
+NOP      |Fetch        |             
+LD       |LdSt         |Load         
+ST       |LdSt         |Store        
+ADD      |Add          |             
+ADDI     |Addi         |             
+BRGE     |Brge         |             
+JUMP     |Jump         |             
+MULT     |Mult         |             
+MAC      |Mac          |             
+DBRGE    |Dbrge        |             
+SUB      |Sub          |             
+BRLE     |Brle         |             
+REPMOV   |Repmov       |             
+HALT     |Halt         |             
+
