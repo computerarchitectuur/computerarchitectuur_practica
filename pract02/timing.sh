@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VALGRIND=~/computerarchitectuur/valgrind-3.7.0/install/bin/valgrind
+VALGRIND=/usr/local/bin/valgrind
 
 if [[ "$1" == "" ]]
 then
