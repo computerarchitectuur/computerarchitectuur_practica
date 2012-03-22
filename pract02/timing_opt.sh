@@ -12,7 +12,7 @@ n=$1
 iteraties=100
 
 rm ./pell_opt
-make pract02
+make pract02_opt
 
 if [ ! -e ./pell_opt ]
 then
