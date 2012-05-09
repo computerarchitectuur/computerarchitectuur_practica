@@ -23,6 +23,10 @@ public class CacheSim {
     }
   }
 
+  private static class OptionError extends Exception {
+    public OptionError(String s) { super(s); }
+  }
+
   public static void main(String[] args) {
 
 
@@ -66,7 +70,8 @@ public class CacheSim {
       line = parser.parse(options, args);
     }
     catch( ParseException exp ) {
-      System.err.println("Parsing of the command line has failed. Here's why: " + exp.getMessage());
+      System.err.println("Parsing of the command line has failed. Here's why: ");
+      System.err.println(exp.getMessage());
       formatter.printHelp("CacheSim", options);
       System.exit(-1);
     }
@@ -77,7 +82,7 @@ public class CacheSim {
       int blocks = Integer.parseInt(line.getOptionValue("blocks"));
       int linesize = Integer.parseInt(line.getOptionValue("linesize"));
       if(! isPowerOf2(blocks) || ! isPowerOf2(linesize)) {
-        throw new Exception("Whoops. blocks and linesize must be powers of 2.");
+        throw new OptionError("Whoops. blocks and linesize must be powers of 2.");
       }
       String ctype = line.getOptionValue("cache");
       if(ctype.equals("DirectMapped")) {
@@ -89,12 +94,12 @@ public class CacheSim {
       else if(ctype.equals("NWaySetAssociative")) {
         int assoc = Integer.parseInt(line.getOptionValue("assoc"));
         if(blocks % assoc != 0) {
-          throw new Exception("Whoops. blocks should be a multiple of the associativity in a n-way set associative cache");
+          throw new OptionError("Whoops. blocks should be a multiple of the associativity in a n-way set associative cache");
         }
         cache = new NWayAssociativeCache(blocks / assoc, linesize, assoc);
       }
       else {
-        throw new Exception("Just because I can.");
+        throw new OptionError("Unknown cache type.");
       }
 
       String pattern = line.getOptionValue("pattern");
@@ -108,11 +113,12 @@ public class CacheSim {
         pattern3(cache, 32);
       }
       else {
-        throw new Exception("Yo dawg, put a known pattern in your pattern so I can cache while I cache.");
+        throw new OptionError("Unknown pattern type.");
       }
     }
-    catch(Exception exp) {
+    catch(OptionError exp) {
       System.err.println(exp.getMessage());
+      exp.printStackTrace();
       formatter.printHelp("CacheSim", options);
       System.exit(-1);
     }
