@@ -29,6 +29,7 @@ public class CacheSim {
     Option cacheOpt    = OptionBuilder.withArgName("cache")
                                       .hasArgs()
                                       .withDescription("Type of cache. One of DirectMapped, FullyAssociative, NWaySetAssociative")
+                                      .isRequired()
                                       .create("cache");
     Option blocksOpt   = OptionBuilder.withArgName("blocks")
                                       .hasArg()
