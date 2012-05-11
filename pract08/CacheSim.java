@@ -23,12 +23,17 @@ public class CacheSim {
     }
   }
 
+  private static class OptionError extends Exception {
+    public OptionError(String s) { super(s); }
+  }
 
-	public static void main(String[] args) {
+  public static void main(String[] args) {
+
 
     Option cacheOpt    = OptionBuilder.withArgName("cache")
                                       .hasArgs()
                                       .withDescription("Type of cache. One of DirectMapped, FullyAssociative, NWaySetAssociative")
+                                      .isRequired()
                                       .create("cache");
     Option blocksOpt   = OptionBuilder.withArgName("blocks")
                                       .hasArg()
@@ -47,7 +52,7 @@ public class CacheSim {
     Option patternOpt  = OptionBuilder.withArgName("pattern")
                                       .hasArg()
                                       .isRequired()
-                                      .withDescription("Address pattern to simulate. Can by one of rowMajor, columnMajor, matrixMultiply, matrixTiledMultiply")
+                                      .withDescription("Address pattern to simulate. Can by one of rowMajor, columnMajor, matrixMultiply or matrixTiledMultiply")
                                       .create("pattern");
 
     Options options = new Options();
@@ -65,7 +70,8 @@ public class CacheSim {
       line = parser.parse(options, args);
     }
     catch( ParseException exp ) {
-      System.err.println("Parsing of the command line has failed. Here's why: " + exp.getMessage());
+      System.err.println("Parsing of the command line has failed. Here's why: ");
+      System.err.println(exp.getMessage());
       formatter.printHelp("CacheSim", options);
       System.exit(-1);
     }
@@ -76,7 +82,7 @@ public class CacheSim {
       int blocks = Integer.parseInt(line.getOptionValue("blocks"));
       int linesize = Integer.parseInt(line.getOptionValue("linesize"));
       if(! isPowerOf2(blocks) || ! isPowerOf2(linesize)) {
-        throw new Exception("Whoops. blocks and linesize must be powers of 2.");
+        throw new OptionError("Whoops. blocks and linesize must be powers of 2.");
       }
       String ctype = line.getOptionValue("cache");
       if(ctype.equals("DirectMapped")) {
@@ -88,67 +94,68 @@ public class CacheSim {
       else if(ctype.equals("NWaySetAssociative")) {
         int assoc = Integer.parseInt(line.getOptionValue("assoc"));
         if(blocks % assoc != 0) {
-          throw new Exception("Whoops. blocks should be a multiple of the associativity in a n-way set associative cache");
+          throw new OptionError("Whoops. blocks should be a multiple of the associativity in a n-way set associative cache");
         }
         cache = new NWayAssociativeCache(blocks / assoc, linesize, assoc);
       }
       else {
-        throw new Exception("Just because I can.");
+        throw new OptionError("Unknown cache type.");
       }
 
       String pattern = line.getOptionValue("pattern");
       if(pattern.equals("rowMajor")) {
-				rowMajor(cache, 8);
-      } 
+        rowMajor(cache, 32);
+      }
       else if(pattern.equals("columnMajor")) {
-				columnMajor(cache, 8);
-      } 
+        columnMajor(cache, 32);
+      }
       else if(pattern.equals("matrixMultiply")) {
-				matrixMultiply(cache, 8);
-      } 
+        matrixMultiply(cache, 32);
+      }
       else if(pattern.equals("matrixTiledMultiply")) {
-				matrixTiledMultiply(cache, 8);
-      } 
+        matrixTiledMultiply(cache, 32);
+      }
       else {
-        throw new Exception("Yo dawg, put a known pattern in your pattern so I can cache while I cache.");
+        throw new OptionError("Unknown pattern type.");
       }
     }
-    catch(Exception exp) {
+    catch(OptionError exp) {
       System.err.println(exp.getMessage());
+      exp.printStackTrace();
       formatter.printHelp("CacheSim", options);
       System.exit(-1);
     }
 
-
-	}
-
-	private static boolean sendCacheRequest(Cache cache, String matrix, int i, int j, int size)
-	{
-		// different matrices are located in different places in the memory, this
-		// is modelled by using a matrix-specific base address.
-		int base = 0;
-		if (matrix.compareTo("A")==0)
-			base = 0;
-		else if (matrix.compareTo("B")==0)
-			base = 4*size*size + 64;
-		else if (matrix.compareTo("Cr")==0 || matrix.compareTo("C")==0)
-			base = 8*size*size + 128;
-		else
-		{
-			System.out.println("Matrix " + matrix + "not recognized, please use A, B or C");
-			System.exit(-1);
-		}
+  }
 
 
-		// Address is calculated (multiply by assumes int equals 4B).
-		int address = base + 4*((i * size) + j);
+  private static boolean sendCacheRequest(Cache cache, String matrix, int i, int j, int size) {
+    // different matrices are located in different places in the memory, this
+    // is modelled by using a matrix-specific base address.
+    int base = 0;
+    if (matrix.compareTo("A")==0)
+      base = 0;
+    else if (matrix.compareTo("B")==0)
+      base = 4*size*size + 64;
+    else if (matrix.compareTo("C")==0)
+      base = 8*size*size + 96 ;
+    else
+    {
+      System.err.println("Matrix " + matrix + "not recognized, please use A, B or C");
+      System.exit(-1);
+    }
 
-		// Print out the address  (Optional)
-    boolean hit =  cache.request(address);
-		System.out.println(matrix + ": " +  address + (hit ? "" : "*"));
+
+    // Address is calculated (multiply by 4 assumes int equals 4B).
+    int address = base + 4*((i * size) + j);
+
+    boolean hit = cache.request(address);
+
+    // Print out the address  (comment out the following line if needed)
+    //System.out.println(matrix + ": " +  address + (hit ? "" : " *"));
 
     return hit;
-	}
+  }
 
 
 	// This function generates the access pattern.
@@ -174,21 +181,21 @@ public class CacheSim {
 		}
 
 		// Print matrix (for verification)
-		System.out.println("////////////////////////////////////////////////////////////////////////////////");
-		System.out.println("/////////////////////////////// Input Matrix ///////////////////////////////////");
-		System.out.println("////////////////////////////////////////////////////////////////////////////////");
+		//System.out.println("////////////////////////////////////////////////////////////////////////////////");
+		//System.out.println("/////////////////////////////// Input Matrix ///////////////////////////////////");
+		//System.out.println("////////////////////////////////////////////////////////////////////////////////");
 		// A
-		System.out.println("A=\t");
-		for (int i=0;i<size;i++)
-		{	
-			System.out.println("\t");
-			for (int j=0;j<size;j++)
-			{
-				System.out.print(A[ i ][ j ]);
-				System.out.print("\t");
-			}
-			System.out.println();
-		}
+		//System.out.println("A=\t");
+		//for (int i=0;i<size;i++)
+		//{	
+			//System.out.println("\t");
+			//for (int j=0;j<size;j++)
+			//{
+				//System.out.print(A[ i ][ j ]);
+				//System.out.print("\t");
+			//}
+			//System.out.println();
+		//}
 
 		// Now do B = A*2
 		for (int i=0;i<size;i++)
@@ -213,23 +220,23 @@ public class CacheSim {
 		}
 
 		// Print matrix (for verification)
-		System.out.println("////////////////////////////////////////////////////////////////////////////////");
-		System.out.println("/////////////////////////////// Output Matrix //////////////////////////////////");
-		System.out.println("////////////////////////////////////////////////////////////////////////////////");
+		//System.out.println("////////////////////////////////////////////////////////////////////////////////");
+		//System.out.println("/////////////////////////////// Output Matrix //////////////////////////////////");
+		//System.out.println("////////////////////////////////////////////////////////////////////////////////");
 		// B 
-		System.out.println("B=\t");
+		//System.out.println("A=\t");
 
-		for (int i=0;i<size;i++)
-		{	
-			System.out.println("\t");
-			for (int j=0;j<size;j++)
-			{
-				System.out.print(B[ i ][ j ]);
-				System.out.print("\t");
-			}
-			System.out.println();
-		}
-		System.out.println();
+		//for (int i=0;i<size;i++)
+		//{	
+			//System.out.println("\t");
+			//for (int j=0;j<size;j++)
+			//{
+			//	System.out.print(B[ i ][ j ]);
+			//	System.out.print("\t");
+			//}
+			//System.out.println();
+		//}
+		//System.out.println();
 
 		// Force a cache dump (optional)
 		//cache.request(-1);
@@ -271,21 +278,21 @@ public class CacheSim {
 		}
 
 		// Print matrix (for verification)
-		System.out.println("////////////////////////////////////////////////////////////////////////////////");
-		System.out.println("/////////////////////////////// Input Matrix ///////////////////////////////////");
-		System.out.println("////////////////////////////////////////////////////////////////////////////////");
+		//System.out.println("////////////////////////////////////////////////////////////////////////////////");
+		//System.out.println("/////////////////////////////// Input Matrix ///////////////////////////////////");
+		//System.out.println("////////////////////////////////////////////////////////////////////////////////");
 		// A
-		System.out.println("A=\t");
-		for (int i=0;i<size;i++)
-		{	
-			System.out.println("\t");
-			for (int j=0;j<size;j++)
-			{
-				System.out.print(A[ i ][ j ]);
-				System.out.print("\t");
-			}
-			System.out.println();
-		}
+		//System.out.println("A=\t");
+		//for (int i=0;i<size;i++)
+		//{	
+		//	System.out.println("\t");
+		//	for (int j=0;j<size;j++)
+		//	{
+		//		System.out.print(A[ i ][ j ]);
+		//		System.out.print("\t");
+		//	}
+		//	System.out.println();
+		//}
 
 		// Now do B = A*2
 		for (int i=0;i<size;i++)
@@ -310,23 +317,23 @@ public class CacheSim {
 		}
 
 		// Print matrix (for verification)
-		System.out.println("////////////////////////////////////////////////////////////////////////////////");
-		System.out.println("/////////////////////////////// Output Matrix //////////////////////////////////");
-		System.out.println("////////////////////////////////////////////////////////////////////////////////");
+		//System.out.println("////////////////////////////////////////////////////////////////////////////////");
+		//System.out.println("/////////////////////////////// Output Matrix //////////////////////////////////");
+		//System.out.println("////////////////////////////////////////////////////////////////////////////////");
 		// B 
-		System.out.println("B=\t");
+		//System.out.println("A=\t");
 
-		for (int i=0;i<size;i++)
-		{	
-			System.out.println("\t");
-			for (int j=0;j<size;j++)
-			{
-				System.out.print(B[ i ][ j ]);
-				System.out.print("\t");
-			}
-			System.out.println();
-		}
-		System.out.println();
+		//for (int i=0;i<size;i++)
+		//{	
+		//	System.out.println("\t");
+		//	for (int j=0;j<size;j++)
+		//	{
+		//		System.out.print(B[ i ][ j ]);
+		//		System.out.print("\t");
+		//	}
+		//	System.out.println();
+		//}
+		//System.out.println();
 
 		// Force a cache dump (optional)
 		//cache.request(-1);
@@ -368,33 +375,33 @@ public class CacheSim {
 		}
 	
 		// Print matrix (for verification)
-		System.out.println("////////////////////////////////////////////////////////////////////////////////");
-		System.out.println("/////////////////////////////// Input Matrix ///////////////////////////////////");
-		System.out.println("////////////////////////////////////////////////////////////////////////////////");
+		//System.out.println("////////////////////////////////////////////////////////////////////////////////");
+		//System.out.println("/////////////////////////////// Input Matrix ///////////////////////////////////");
+		//System.out.println("////////////////////////////////////////////////////////////////////////////////");
 		// A
-		System.out.println("A=\t");
-		for (int i=0;i<size;i++)
-		{
-			System.out.print("\t");
-			for (int j=0;j<size;j++)
-			{
-				System.out.print(A[ i ][ j ]);
-				System.out.print("\t");
-			}
-			System.out.println();
-		}
+		//System.out.println("A=\t");
+		//for (int i=0;i<size;i++)
+		//{
+		//	System.out.print("\t");
+		//	for (int j=0;j<size;j++)
+		//	{
+		//		System.out.print(A[ i ][ j ]);
+		//		System.out.print("\t");
+		//	}
+		//	System.out.println();
+		//}
 		// B
-		System.out.println("B=\t");
-		for (int i=0;i<size;i++)
-		{
-			System.out.print("\t");
-			for (int j=0;j<size;j++)
-			{
-				System.out.print(B[ i ][ j ]);
-				System.out.print("\t");
-			}
-			System.out.println();
-		}
+		//System.out.println("B=\t");
+		//for (int i=0;i<size;i++)
+		//{
+		//	System.out.print("\t");
+		//	for (int j=0;j<size;j++)
+		//	{
+		//		System.out.print(B[ i ][ j ]);
+		//		System.out.print("\t");
+		//	}
+		//	System.out.println();
+		//}
 
 		// Now do A*B=C
 		for (int i=0;i<size;i++)
@@ -403,7 +410,7 @@ public class CacheSim {
 			{
 				for (int k=0;k<size;k++)
 				{
-					C[ i ][ j ] = C[ i ][ j ] + A[ i ][ k ] * B[ k ][ j ];
+					C[ i ][ j ] = C[ i ][ j ]+ A[ i ][ k ]* B[ k ][ j ];
 
 					// Read C[k][i]
 					requests++;
@@ -421,7 +428,7 @@ public class CacheSim {
 					
 					// Read B[k][j]
 					requests++;
-					if (sendCacheRequest(cache, "B", k, j, size)) 
+					if (sendCacheRequest(cache, "B", k, i, size)) 
 					{
 						hits++;
 					}
@@ -438,21 +445,21 @@ public class CacheSim {
 		}
 
 		// Print matrix (for verification)
-		System.out.println("////////////////////////////////////////////////////////////////////////////////");
-		System.out.println("/////////////////////////////// Output Matrix //////////////////////////////////");
-		System.out.println("////////////////////////////////////////////////////////////////////////////////");
+		//System.out.println("////////////////////////////////////////////////////////////////////////////////");
+		//System.out.println("/////////////////////////////// Output Matrix //////////////////////////////////");
+		//System.out.println("////////////////////////////////////////////////////////////////////////////////");
 		// C
-		System.out.println("C=\t");
-		for (int i=0;i<size;i++)
-		{
-			System.out.print("\t");
-			for (int j=0;j<size;j++)
-			{
-				System.out.print(C[ i ][ j ]);
-				System.out.print("\t");
-			}
-			System.out.println();
-		}
+		//System.out.println("C=\t");
+		//for (int i=0;i<size;i++)
+		//{
+		//	System.out.print("\t");
+		//	for (int j=0;j<size;j++)
+		//	{
+		//		System.out.print(C[ i ][ j ]);
+		//		System.out.print("\t");
+		//	}
+		//	System.out.println();
+		//}
 
 		// Force a cache dump (optional)
 		//cache.request(-1);
@@ -505,33 +512,33 @@ public class CacheSim {
 		}
 	
 		// Print matrix (for verification)
-		System.out.println("////////////////////////////////////////////////////////////////////////////////");
-		System.out.println("/////////////////////////////// Input Matrix ///////////////////////////////////");
-		System.out.println("////////////////////////////////////////////////////////////////////////////////");
+		//System.out.println("////////////////////////////////////////////////////////////////////////////////");
+		//System.out.println("/////////////////////////////// Input Matrix ///////////////////////////////////");
+		//System.out.println("////////////////////////////////////////////////////////////////////////////////");
 		// A
-		System.out.println("A=\t");
-		for (int i=0;i<size;i++)
-		{
-			System.out.print("\t");
-			for (int j=0;j<size;j++)
-			{
-				System.out.print(A[ i ][ j ]);
-				System.out.print("\t");
-			}
-			System.out.println();
-		}
+		//System.out.println("A=\t");
+		//for (int i=0;i<size;i++)
+		//{
+		//	System.out.print("\t");
+		//	for (int j=0;j<size;j++)
+		//	{
+		//		System.out.print(A[ i ][ j ]);
+		//		System.out.print("\t");
+		//	}
+		//	System.out.println();
+		//}
 		// B
-		System.out.println("B=\t");
-		for (int i=0;i<size;i++)
-		{
-			System.out.print("\t");
-			for (int j=0;j<size;j++)
-			{
-				System.out.print(B[ i ][ j ]);
-				System.out.print("\t");
-			}
-			System.out.println();
-		}
+		//System.out.println("B=\t");
+		//for (int i=0;i<size;i++)
+		//{
+		//	System.out.print("\t");
+		//	for (int j=0;j<size;j++)
+		//	{
+		//		System.out.print(B[ i ][ j ]);
+		//		System.out.print("\t");
+		//	}
+		//	System.out.println();
+		//}
 
 		// Now do A*B=C
 		for (int i0=0;i0<size;i0+=tilesize)
@@ -546,7 +553,7 @@ public class CacheSim {
 						{
 							for (int k=k0;k<(k0+tilesize);k++)
 							{
-								C[ i ][ j ] = C[ i ][ j ] + A[ i ][ k ] * B[ k ][ j ];
+								C[ i ][ j ] = C[ i ][ j ]+ A[ i ][ k ]* B[ k ][ j ];
 
 								// Read C[i][j]
 								requests++;
@@ -583,21 +590,21 @@ public class CacheSim {
 		}
 
 		// Print matrix (for verification)
-		System.out.println("////////////////////////////////////////////////////////////////////////////////");
-		System.out.println("/////////////////////////////// Output Matrix //////////////////////////////////");
-		System.out.println("////////////////////////////////////////////////////////////////////////////////");
+		//System.out.println("////////////////////////////////////////////////////////////////////////////////");
+		//System.out.println("/////////////////////////////// Output Matrix //////////////////////////////////");
+		//System.out.println("////////////////////////////////////////////////////////////////////////////////");
 		// C
-		System.out.println("C=\t");
-		for (int i=0;i<size;i++)
-		{
-			System.out.print("\t");
-			for (int j=0;j<size;j++)
-			{
-				System.out.print(C[ i ][ j ]);
-				System.out.print("\t");
-			}
-			System.out.println();
-		}
+		//System.out.println("C=\t");
+		//for (int i=0;i<size;i++)
+		//{
+		//	System.out.print("\t");
+		//	for (int j=0;j<size;j++)
+		//	{
+		//		System.out.print(C[ i ][ j ]);
+		//		System.out.print("\t");
+		//	}
+		//	System.out.println();
+		//}
 
 		// Force a cache dump (optional)
 		//cache.request(-1);
@@ -613,6 +620,4 @@ public class CacheSim {
 		System.out.println("////////////////////////////////////////////////////////////////////////////////");
 
 	}
-
-
 }
