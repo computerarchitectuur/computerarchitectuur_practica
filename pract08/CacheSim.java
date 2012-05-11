@@ -104,16 +104,16 @@ public class CacheSim {
 
       String pattern = line.getOptionValue("pattern");
       if(pattern.equals("rowMajor")) {
-        rowMajor(cache, 32);
+        rowMajor(cache, 8);
       }
       else if(pattern.equals("columnMajor")) {
-        columnMajor(cache, 32);
+        columnMajor(cache, 8);
       }
       else if(pattern.equals("matrixMultiply")) {
-        matrixMultiply(cache, 32);
+        matrixMultiply(cache, 8);
       }
       else if(pattern.equals("matrixTiledMultiply")) {
-        matrixTiledMultiply(cache, 32);
+        matrixTiledMultiply(cache, 8);
       }
       else {
         throw new OptionError("Unknown pattern type.");
@@ -152,7 +152,7 @@ public class CacheSim {
     boolean hit = cache.request(address);
 
     // Print out the address  (comment out the following line if needed)
-    //System.out.println(matrix + ": " +  address + (hit ? "" : " *"));
+    System.out.println(matrix + ": " +  address + (hit ? "" : " *"));
 
     return hit;
   }
