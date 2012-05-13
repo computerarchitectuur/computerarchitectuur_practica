@@ -137,7 +137,9 @@ public class CacheSim {
       base = 0;
     else if (matrix.compareTo("B")==0)
       base = 4*size*size + 64;
-    else if (matrix.compareTo("C")==0)
+    else if (matrix.compareTo("Cread")==0)
+      base = 8*size*size + 96 ;
+    else if (matrix.compareTo("Cwrite")==0)
       base = 8*size*size + 96 ;
     else
     {
@@ -414,7 +416,7 @@ public class CacheSim {
 
 					// Read C[k][i]
 					requests++;
-					if (sendCacheRequest(cache, "C", i, j, size)) 
+					if (sendCacheRequest(cache, "Cread", i, j, size)) 
 					{
 						hits++;
 					}
@@ -435,7 +437,7 @@ public class CacheSim {
 					
 					// Write C[k][i]
 					requests++;
-					if (sendCacheRequest(cache, "Cr", i, j, size)) 
+					if (sendCacheRequest(cache, "Cwrite", i, j, size)) 
 					{
 						hits++;
 					}
@@ -557,7 +559,7 @@ public class CacheSim {
 
 								// Read C[i][j]
 								requests++;
-								if (sendCacheRequest(cache, "C", i, j, size)) 
+								if (sendCacheRequest(cache, "Cread", i, j, size)) 
 								{
 									hits++;
 								}
@@ -578,7 +580,7 @@ public class CacheSim {
 
 								// Write C[i][j]
 								requests++;
-								if (sendCacheRequest(cache, "Cr", i, j, size)) 
+								if (sendCacheRequest(cache, "Cwrite", i, j, size)) 
 								{
 									hits++;
 								}
