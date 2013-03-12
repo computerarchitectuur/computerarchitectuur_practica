@@ -1,0 +1,7 @@
+[Pipelined Architecture Project]
+PipelineFunctionality=pipe1.pfu
+InstructionMemory=pijplijn.cod
+DataMemory=pijplijn.dat
+MemoryAccessTime=1
+Forwarding=no
+DelaySlot=0

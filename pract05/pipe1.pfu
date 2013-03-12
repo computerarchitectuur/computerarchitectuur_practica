@@ -1,0 +1,37 @@
+[Pipeline Functionality]
+;Opcode|A Formal|B Formal|C Formal|IR ext  |S1      |S2      |ALU     |Comp    |Mem
+NOP    |1       |2       |        |        |        |        |        |        |        
+LDB    |1       |2       |2       |A       |IR      |Word    |ADD     |        |RB      
+LDH    |1       |2       |2       |A       |IR      |Word    |ADD     |        |RH      
+LDW    |1       |2       |2       |A       |IR      |Word    |ADD     |        |RW      
+STB    |1       |2       |        |A       |IR      |Word    |ADD     |        |WB      
+STH    |1       |2       |        |A       |IR      |Word    |ADD     |        |WH      
+STW    |1       |2       |        |A       |IR      |Word    |ADD     |        |WW      
+ADD    |1       |2       |3       |A       |B       |        |ADD     |        |        
+SUB    |1       |2       |3       |A       |B       |        |SUB     |        |        
+MUL    |1       |2       |3       |A       |B       |        |MUL     |        |        
+DIV    |1       |2       |3       |A       |B       |        |DIV     |        |        
+AND    |1       |2       |3       |A       |B       |        |AND     |        |        
+OR     |1       |2       |3       |A       |B       |        |OR      |        |        
+XOR    |1       |2       |3       |A       |B       |        |XOR     |        |        
+SLL    |1       |2       |3       |A       |B       |        |SLL     |        |        
+SRL    |1       |2       |3       |A       |B       |        |SRL     |        |        
+SRA    |1       |2       |3       |A       |B       |        |SRA     |        |        
+ADDI   |1       |2       |2       |A       |IR      |Word    |ADD     |        |        
+SUBI   |1       |2       |2       |A       |IR      |Word    |SUB     |        |        
+MULI   |1       |2       |2       |A       |IR      |Word    |MUL     |        |        
+DIVI   |1       |2       |2       |A       |IR      |Word    |DIV     |        |        
+ANDI   |1       |2       |2       |A       |IR      |Word    |AND     |        |        
+ORI    |1       |2       |2       |A       |IR      |Word    |OR      |        |        
+XORI   |1       |2       |2       |A       |IR      |Word    |XOR     |        |        
+SLLI   |1       |2       |2       |A       |IR      |Word    |SLL     |        |        
+SRLI   |1       |2       |2       |A       |IR      |Word    |SRL     |        |        
+SRAI   |1       |2       |2       |A       |IR      |Word    |SRA     |        |        
+LIH    |1       |2       |1       |A       |IR      |Half    |S2S1    |        |        
+BRZ    |1       |2       |        |PC1     |IR      |Word    |ADD     |EQ      |        
+BRNZ   |1       |2       |        |PC1     |IR      |Word    |ADD     |NE      |        
+BRGT   |1       |2       |        |PC1     |IR      |Word    |ADD     |GT      |        
+BRGE   |1       |2       |        |PC1     |IR      |Word    |ADD     |GE      |        
+BRLT   |1       |2       |        |PC1     |IR      |Word    |ADD     |LT      |        
+BRLE   |1       |2       |        |PC1     |IR      |Word    |ADD     |LE      |        
+
