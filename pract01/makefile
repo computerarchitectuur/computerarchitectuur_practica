@@ -1,8 +1,9 @@
 pract01: getemacs
-	gcc -O0 -S -m32 pell.c
-	gcc -O0 -m32 pell.c -g -o pell
+	gcc -O0 -S -m32 lucas.c
+	gcc -O0 -m32 lucas.c -g -o lucas
+
 clean:
-	rm -rf pell.s pell
+	rm -rf lucas.s lucas
 
 getemacs:
 	cp .emacs ../..

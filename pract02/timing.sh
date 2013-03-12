@@ -9,52 +9,54 @@ then
 fi
 
 n=$1
-iteraties=100
+iteraties=1000
+PROG=lucas
 
-rm ./pell
+rm ./${PROG}
 make pract02
 
-if [ ! -e ./pell ]
+if [ ! -e ./${PROG} ]
 then
-  echo "Er was een FOUT bij het assembleren van je pell.s!"
+  echo "Er was een FOUT bij het assembleren van je ${PROG}.s!"
   exit
 fi
 
-$VALGRIND --tool=cachegrind --cachegrind-out-file=timing.out ./pell $n $iteraties
+$VALGRIND --tool=cachegrind --cachegrind-out-file=timing.out ./${PROG} $n $iteraties &> output
+cat output | grep Lucas 
+cat output | grep "Gesimuleerde" # | awk '{print $4}'
 
 echo # Empty line
 
 correctnesscheck() {
-# for i in `seq 0 22`; do ./pell $i 1 | cut '-d=' -f2 | cut -'d ' -f2 | sed -e "s/^/  correctewaarden[$i]=/" ; done
-  correctewaarden[0]=0
-  correctewaarden[1]=1
-  correctewaarden[2]=2
-  correctewaarden[3]=5
-  correctewaarden[4]=12
-  correctewaarden[5]=29
-  correctewaarden[6]=70
-  correctewaarden[7]=169
-  correctewaarden[8]=408
-  correctewaarden[9]=985
-  correctewaarden[10]=2378
-  correctewaarden[11]=5741
-  correctewaarden[12]=13860
-  correctewaarden[13]=33461
-  correctewaarden[14]=80782
-  correctewaarden[15]=195025
-  correctewaarden[16]=470832
-  correctewaarden[17]=1136689
-  correctewaarden[18]=2744210
-  correctewaarden[19]=6625109
-  correctewaarden[20]=15994428
-  correctewaarden[21]=38613965
-  correctewaarden[22]=93222358
-
-  i=$n
-  result=`./pell $i 1 | cut '-d=' -f2 | cut -'d ' -f2 `
-  if [[ "$result" != ${correctewaarden[$i]} ]]
-  then
-	echo "Fout! De correcte waarde voor pell($i) moet ${correctewaarden[$i]} zijn, maar je programma geeft $result terug!"
+   correctewaarden[0]=2
+   correctewaarden[1]=2
+   correctewaarden[2]=6
+   correctewaarden[3]=10
+   correctewaarden[4]=22
+   correctewaarden[5]=42
+   correctewaarden[6]=86
+   correctewaarden[7]=170
+   correctewaarden[8]=342
+   correctewaarden[9]=682
+   correctewaarden[10]=1366
+   correctewaarden[11]=2730
+   correctewaarden[12]=5462
+   correctewaarden[13]=10922
+   correctewaarden[14]=21846
+   correctewaarden[15]=43690
+   correctewaarden[16]=87382
+   correctewaarden[17]=174762
+   correctewaarden[18]=349526
+   correctewaarden[19]=699050
+   correctewaarden[20]=1398102
+   correctewaarden[21]=2796202
+   correctewaarden[22]=5592406
+   
+   i=$n
+   result=`./${PROG} $i 1 | cut '-d=' -f2 | cut -'d ' -f2 `
+   if [[ "$result" != ${correctewaarden[$i]} ]]
+   then
+	   echo "Fout! De correcte waarde voor ${PROG}($i) moet ${correctewaarden[$i]} zijn, maar je programma geeft $result terug!"
   fi
 }
 correctnesscheck

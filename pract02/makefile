@@ -5,11 +5,11 @@ all:
 	@$(ECHO) "Let op! assembly OVERSCHRIJFT pell.s!!!!!"
 
 assembly:
-	gcc -o pell.s -O0 -c -S pell.c
+	gcc -o lucas.s -O0 -c -S lucas.c
 pract02:
-	gcc -g -o pell pell.s
+	gcc -g -o lucas lucas.s
 pract02_opt:
-	gcc -O1 -c -S -m32 -o pell_opt.s pell.c
-	gcc -O1 -m32 pell.c -o pell_opt
+	gcc -O1 -c -S -m32 -o lucas_opt.s lucas.c
+	gcc -O1 -m32 lucas.c -o lucas_opt
 clean:
-	rm -rf pell pell_opt pell_debug
+	rm -rf lucas lucas_opt
