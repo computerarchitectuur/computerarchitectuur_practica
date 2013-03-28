@@ -300,7 +300,7 @@ IDTBase 	dd      IDTStart
 
 MAX_TAKEN equ 5
 
-STAPELGROOTTE equ 300
+STAPELGROOTTE equ 500
 
 ; Takenlijst is een lijst van MAX_TAKEN groot. Deze lijst bevat de top van 
 ; de stapel van de taak wanneer de taak niet aan het uitvoeren is. Indien 
@@ -378,7 +378,7 @@ main:
 
 
 	; Zorg er voor dat we debugexcepties genereren als een programma zijn stack lijkt te over/underflowen
-	; (dit is geen garantie indien men domweg sub/adds doet op esp, maar het is alvast ietsje betrouwbaarder)
+	; (dit is geen garantie indien men sub/adds doet op esp, maar het is alvast ietsje betrouwbaarder)
 	lea  eax, [begin_stapels]
 	mov  dr0, eax
 	lea  eax, [einde_stapels]
@@ -630,6 +630,8 @@ sleep:
         add     eax, ecx
         mov     dword [ebx + 4], eax
         mov     edx, 0
+        cli
+        mov     esp, 0
         jmp     schedulerhandler.taakzoeklus
 awake:
         ret
@@ -646,8 +648,9 @@ schedulerhandler:
         mov	dword [ebx],esp
         mov     dword [ebx + 4], 0
         mov    ecx, [Huidige_Tick]
-.taakzoeklus:
         cli
+        mov     esp, 0
+.taakzoeklus:
         add	ebx, 8
         cmp	ebx, takenlijst + (MAX_TAKEN * 8)
         jl	.nog_niet_aan_het_einde
