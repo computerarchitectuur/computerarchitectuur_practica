@@ -336,15 +336,30 @@ main:
 ; zet de onderbrekingen terug aan
   sti
 
-; teken een spiraal
+; Hoofdprogramma dat registerwaarden checkt!
+  jmp checkprogramma
 
-
-  jmp spiraal
-
-;================================= handlers ==============================
-
+;================================= Data ==================================
+; Zet hier al je data!
 teller  dd 0
 aan db 0
+huidige_positie_x dd 20
+huidige_positie_y dd 20
+spatie db " ", 0
+kruisje  db "X", 0
+
+;================================= Fix disassembly =======================
+; Omdat de disassembler de bovenstaande data gaat proberen interpreteren als
+; instructies, is het mogelijk dat de disassembly verstoord raakt, en dat dus
+; de eerste instructies in timerhandler fout interpreteert. Om dit te voorkomen
+; zetten we hier een aantal extra NOP-instructies (0x90) tussen, zodat timerhandler
+; zeker correct weergegeven wordt. Een x86 instructie is maximaal 15 bytes lang.
+
+TIMES 15 DB 0x90
+
+
+
+;================================= handlers ==============================
 
 timerhandler:  ; Facultatieve opgave
 ; ...........
@@ -693,6 +708,173 @@ herbegin:
 	mov	si,'A'
 einde	ret
 
+; deze code initializeert alle registerwaarden op een constante waarde,
+; en checkt constant of het deze waarden nog bevat. Indien niet, is er
+; een interrupt handler die deze waarden fout herstelt, en wordt een
+; waarschuwing geprint! Bovendien gaat het een animatie verschijnen die
+; zal duidelijk maken wanneer deze code niet meer zou uitgevoerd
+; worden door het slecht buitengaan van de interrupt handler.
+; TODO: check ESP ook expliciet? Dit wordt enkel impliciet gecheck op dit moment
+; doordat we het huidige animatieteken daarin opslaan :-)
+CHECK_EAX EQU 0x12345678
+CHECK_EBX EQU 0xdeadbeef
+CHECK_ECX EQU 0xc0ffee00
+CHECK_EDX EQU 0x41424344
+CHECK_EBP EQU 0xbac01324
+CHECK_ESI EQU 0x794613ba
+CHECK_EDI EQU 0x90abcdef
+
+CHECK_X EQU 0
+CHECK_Y EQU 0
+ANIM_X EQU 12
+ANIM_Y EQU 0
+
+check_ok db "Check ok...", 0
+check_fail db "Check FAIL: ", 0
+fail_eax db "eax", 0
+fail_ebx db "ebx", 0
+fail_ecx db "ecx", 0
+fail_edx db "edx", 0
+fail_ebp db "ebp", 0
+fail_esi db "esi", 0
+fail_edi db "edi", 0
+fail_esp db "esp/stack", 0
+
+checkprogramma:
+
+; init
+mov	eax, CHECK_EAX
+mov	ebx, CHECK_EBX
+mov	ecx, CHECK_ECX
+mov	edx, CHECK_EDX
+mov	ebp, CHECK_EBP
+mov	esi, CHECK_ESI
+mov	edi, CHECK_EDI
+push	word '/' ; initiele animatietoestand
+
+checklus:
+cmp	eax, CHECK_EAX
+jne	checkfailed_eax
+cmp	ebx, CHECK_EBX
+jne	checkfailed_ebx
+cmp	ecx, CHECK_ECX
+jne	checkfailed_ecx
+cmp	edx, CHECK_EDX
+jne	checkfailed_edx
+cmp	ebp, CHECK_EBP
+jne	checkfailed_ebp
+cmp	esi, CHECK_ESI
+jne	checkfailed_esi
+cmp	edi, CHECK_EDI
+jne	checkfailed_edi
+
+
+animatie_start:
+cmp	word [esp], '/'
+je	animatie_1
+cmp	word [esp], '-'
+je	animatie_2
+cmp	word [esp], '\'
+je	animatie_3
+cmp	word [esp], '|'
+je	animatie_4
+
+jmp checkfailed_esp
+
+animatie_1:
+	mov word [esp], '-'
+	jmp animatie_end
+animatie_2:
+	mov word [esp], '\'
+	jmp animatie_end
+animatie_3:
+	mov word [esp], '|'
+	jmp animatie_end
+animatie_4:
+	mov word [esp], '/'
+	jmp animatie_end
+
+animatie_end:
+pushad
+push word ANIM_Y
+push word ANIM_X
+push word [esp+8*4+2*2] ; 8 van pushad, 2 van x en y, die slechts 2 BYTES ZIJN! IEW
+call printchar
+
+checkok:
+push CHECK_Y
+push CHECK_X
+push check_ok
+call printstring
+add  esp, 12
+
+popad
+
+jmp checklus
+
+; We hergebruiken de positie van de animatie
+checkfailed_eax:
+push ANIM_Y
+push ANIM_X
+push fail_eax
+jmp checkfailed
+
+checkfailed_ebx:
+push ANIM_Y
+push ANIM_X
+push fail_ebx
+jmp checkfailed
+
+checkfailed_ecx:
+push ANIM_Y
+push ANIM_X
+push fail_ecx
+jmp checkfailed
+
+checkfailed_edx:
+push ANIM_Y
+push ANIM_X
+push fail_edx
+jmp checkfailed
+
+checkfailed_ebp:
+push ANIM_Y
+push ANIM_X
+push fail_ebp
+jmp checkfailed
+
+checkfailed_esi:
+push ANIM_Y
+push ANIM_X
+push fail_esi
+jmp checkfailed
+
+checkfailed_edi:
+push ANIM_Y
+push ANIM_X
+push fail_edi
+jmp checkfailed
+
+checkfailed_esp:
+push ANIM_Y
+push ANIM_X
+push fail_esp
+jmp checkfailed
+
+
+
+checkfailed:
+push CHECK_Y
+push CHECK_X
+push check_fail
+call printstring
+add  esp, 12
+; Print wat we reeds hadden klaar gezet hiervoor in de register-fail blokken
+call printstring
+add  esp, 12
+; Gedaan! Loop oneindig!
+checkfailed_loop:
+jmp checkfailed_loop
 
 
 ; deze code tekent een spiraal op het scherm in een gegeven rechthoek
