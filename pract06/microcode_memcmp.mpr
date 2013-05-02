@@ -1,0 +1,5 @@
+[Microprogrammed Architecture Project]
+Microcode=microcode_memcmp.mco
+InstructionMemory=microcode_memcmp.cod
+DataMemory=microcode_memcmp.dat
+MemoryAccessTime=1

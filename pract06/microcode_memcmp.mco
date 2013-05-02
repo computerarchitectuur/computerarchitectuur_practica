@@ -19,9 +19,10 @@
 0010 |Sub   |SUB   |A     |B     |C     |      |      |True  |Wb    |      |      |      |      
 0011 |Brle  |S1    |A     |      |      |      |      |GT    |Fetch |      |      |      |      
 0012 |      |ADD   |PC    |IR    |PC    |Word  |      |True  |Fetch |      |      |      |      
-0013 |Mac   |      |      |      |      |      |      |      |      |      |      |      |      
+0013 |Msac  |      |      |      |      |      |      |      |      |      |      |      |      
 0014 |Dbrge |      |      |      |      |      |      |      |      |      |      |      |      
-0015 |Repmov|      |      |      |      |      |      |      |      |      |      |      |      
+0015 |Brne  |      |      |      |      |      |      |      |      |      |      |      |      
+0016 |Memcmp|      |      |      |      |      |      |      |      |      |      |      |      
 
 [Jump Tables]
 ;Opcode  |Jump Table 1 |Jump Table 2 
@@ -33,10 +34,11 @@ ADDI     |Addi         |
 BRGE     |Brge         |             
 JUMP     |Jump         |             
 MULT     |Mult         |             
-MAC      |Mac          |             
-DBRGE    |Dbrge        |             
+MSAC     |             |             
+DBRGE    |             |             
 SUB      |Sub          |             
 BRLE     |Brle         |             
-REPMOV   |Repmov       |             
+MEMCMP   |             |             
 HALT     |Halt         |             
+BRNE     |             |             
 

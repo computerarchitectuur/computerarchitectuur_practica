@@ -3,12 +3,12 @@ AluDivAndMult=yes
 CompleteComparatorSet=yes
 CompleteSignExtend=no
 CompleteMemoryOperations=no
-DataMemorySize=1024
+DataMemorySize=32768
 CodeMemorySize=256
 
 [Instruction Encoding]
 NumberOfOpcodes=64
-NumberOfRegisters=32
+NumberOfRegisters=16
 
 [Instructions]
 ;Opcode  |Type|Mnemonic Representation
@@ -20,12 +20,13 @@ ADDI     | I  |r2,i,r1
 BRGE     | I  |r1,j
 JUMP     | I  |j
 MULT     | R  |r3,r2,r1
-MAC      | R  |r3,r2,r1
+MSAC     | R  |r3,r2,r1
 DBRGE    | I  |r1,r2,j
 SUB      | R  |r3,r1,r2
 BRLE     | I  |r1,j
-REPMOV   | R  |r3,r1,r2
+MEMCMP   | R  |r3,r1,r2
 HALT     | J  |
+BRNE     | I  |r1,j
 
 [Microprogrammed Architecture]
 MicroCodeSize=256
@@ -42,6 +43,7 @@ WA=no
 
 [Extra Registers]
 TEMP
+TEMP2
 
 [Pipelined Architecture]
 BlindRegisterFileReading=yes

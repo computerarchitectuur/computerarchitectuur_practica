@@ -1,5 +1,0 @@
-[Microprogrammed Architecture Project]
-Microcode=microcode_repmov.mco
-InstructionMemory=microcode_repmov.cod
-DataMemory=microcode_repmov.dat
-MemoryAccessTime=1
