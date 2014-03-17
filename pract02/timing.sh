@@ -10,7 +10,7 @@ fi
 
 n=$1
 iteraties=1000
-PROG=lucas
+PROG=jacobsthal
 
 rm ./${PROG}
 make pract02
@@ -22,35 +22,35 @@ then
 fi
 
 $VALGRIND --tool=cachegrind --cachegrind-out-file=timing.out ./${PROG} $n $iteraties &> output
-cat output | grep Lucas 
+cat output | grep Jacobsthal 
 cat output | grep "Gesimuleerde" # | awk '{print $4}'
 
 echo # Empty line
 
 correctnesscheck() {
-   correctewaarden[0]=2
-   correctewaarden[1]=2
-   correctewaarden[2]=6
-   correctewaarden[3]=10
-   correctewaarden[4]=22
-   correctewaarden[5]=42
-   correctewaarden[6]=86
-   correctewaarden[7]=170
-   correctewaarden[8]=342
-   correctewaarden[9]=682
-   correctewaarden[10]=1366
-   correctewaarden[11]=2730
-   correctewaarden[12]=5462
-   correctewaarden[13]=10922
-   correctewaarden[14]=21846
-   correctewaarden[15]=43690
-   correctewaarden[16]=87382
-   correctewaarden[17]=174762
-   correctewaarden[18]=349526
-   correctewaarden[19]=699050
-   correctewaarden[20]=1398102
-   correctewaarden[21]=2796202
-   correctewaarden[22]=5592406
+   correctewaarden[0]=0
+   correctewaarden[1]=1
+   correctewaarden[2]=1
+   correctewaarden[3]=3
+   correctewaarden[4]=5
+   correctewaarden[5]=11
+   correctewaarden[6]=21
+   correctewaarden[7]=43
+   correctewaarden[8]=85
+   correctewaarden[9]=171
+   correctewaarden[10]=341
+   correctewaarden[11]=683
+   correctewaarden[12]=1365
+   correctewaarden[13]=2731
+   correctewaarden[14]=5461
+   correctewaarden[15]=10923
+   correctewaarden[16]=21845
+   correctewaarden[17]=43691
+   correctewaarden[18]=87381
+   correctewaarden[19]=174763
+   correctewaarden[20]=349525
+   correctewaarden[21]=699051
+   correctewaarden[22]=1398101
    
    i=$n
    result=`./${PROG} $i 1 | cut '-d=' -f2 | cut -'d ' -f2 `
