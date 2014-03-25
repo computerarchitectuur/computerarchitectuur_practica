@@ -1,5 +1,5 @@
 ; 
-; practicum 3 computerarchitectuur
+; practicum 4 computerarchitectuur
 ;
 ; dit programma bestaat uit een beperkt aantal sectoren die ingelezen
 ; worden na het uitvoeren van de BIOS. Dit zijn de eerste sectoren die
@@ -294,6 +294,43 @@ IDTInfo:		; Inhoud van IDTR
 IDTLimit 	dw	IDTEnd-IDTStart-1 ; limit = offset hoogste byte	
 IDTBase 	dd      IDTStart
 
+;------------------------------------------------------------------------------
+; Data voor de takenlijst
+;------------------------------------------------------------------------------
+
+MAX_TAKEN equ 5
+
+STAPELGROOTTE equ 500
+
+; Takenlijst is een lijst van MAX_TAKEN groot. Deze lijst bevat de top van 
+; de stapel van de taak wanneer de taak niet aan het uitvoeren is. Indien 
+; het element 0 is, wijst dit op de afwezigheid van een taak. Bovendien
+; bevat deze lijst informatie over wanneer in de tijd een taak mag uitgevoerd worden
+
+takenlijst times 2*MAX_TAKEN dd (0)
+idle_taak_slot  times 2 dd (0)
+
+
+; Hier worden enkele stapels gedefinieerd van elk STAPELGROOTTE grootte (bytes!).
+begin_stapels times 1 dd (0)
+
+stapel1    times STAPELGROOTTE db (0)
+stapel2    times STAPELGROOTTE db (0)
+mainstapel times STAPELGROOTTE db (0)
+infostapel times STAPELGROOTTE db (0)
+idlestapel times STAPELGROOTTE db (0)
+
+einde_stapels times 1 dd (0)
+
+; variabele die bijhoudt welke taak op elk ogenblik aan het uitvoeren is.
+; De veranderlijk bevat het adres van het corresponderende element in takenlijst.
+
+Huidige_Taak dd 0
+
+; variabele die kijkt hoeveel timer interrupts we al gehad hebben
+Huidige_Tick dd 0
+
+
 ;================================= MAIN ==============================
 
 main:	
@@ -314,62 +351,371 @@ main:
 	mov	ss, ax
 	mov	esp, Loaded     ; stapel wijst nog steeds naar dezelfde locatie
 
-; registers krijgen een geldige waarde
-	mov eax,0 
-	mov ebx,79
-	mov ecx,0
-	mov edx,20
+;------------------------------------------------------------------------------
+; Timer aanpassen (voor practicum 4)
+;------------------------------------------------------------------------------
+
+        ; Verhoog het aantal HZ van de PIT zijn standaardwaarde van 18.2Hz naar 100Hz:
+        ; Port 40h -> system time counter divisor
+        ; Port 43h -> control word register
+
+        ; (00) counter 0 select (11) read/write counter bits 0-7 first, then 8-15 (x11) counter mode: square (0) binary counter
+        mov     al, 00110110b
+        out     43h, al
+
+        ; bits 0-7
+        mov     al, 00h
+        out     40h, al
+        ; bits 8-15
+        mov     al, 00fh ; ~ 1000Hz? ### Check
+        out     40h, al
+        ; zet de onderbrekingen terug aan
+	sti
+
+;------------------------------------------------------------------------------
+; Debug Excepties (voor practicum 4)
+;------------------------------------------------------------------------------
 
 
-; installeer de timer onderbrekingsroutine (facultatieve opgave)
+	; Zorg er voor dat we debugexcepties genereren als een programma zijn stack lijkt te over/underflowen
+	; (dit is geen garantie indien men sub/adds doet op esp, maar het is alvast ietsje betrouwbaarder)
+	lea  eax, [begin_stapels]
+	mov  dr0, eax
+	lea  eax, [einde_stapels]
+	mov  dr1, eax
+
+	mov  eax, dr7
+	; dr0
+	or   eax, 11b  ; L0|G0
+	or   eax, 00000000000000110000000000000000b ; R/W0
+	or   eax, 00000000000011000000000000000000b ; LEN0 == 4
+
+	; dr1
+	or   eax, 1100b ; L1|G1
+	or   eax, 00000000001100000000000000000000b ; R/W1
+	or   eax, 00000000110000000000000000000000b ; LEN1 == 4
+
+	mov  dr7, eax
+	
+	
+        mov  ebx, debughandler
+        push ebx
+        push 1
+        call install_handler
+
+
+        ; We gaan over naar een voorgedefinieerde stapel en stoppen het hoofdprogramma in de lijst
+        lea     esp, [mainstapel + STAPELGROOTTE]
+        mov     dword [takenlijst], esp
+        mov     dword [Huidige_Taak], takenlijst
+
+	; installeer de schedulerhandler op de timeronderbreking en zet deze onderbreking aan (Opgave 3 en 4)
 
 ; .............
 
-; installeer de toetsenbord onderbrekingsroutine (Opgave 1)
-
+; Start de taken (Opgave 5 en 6)
 ; .............
 
-; zet onderbrekingen voor toetsenbord en timer aan (Opgave 2 [toetsenbord], en facultatieve opgave [timer])
+        mov     eax, 0
+        mov     ebx, 79
+        mov     ecx, 0
+        mov     edx, 19
+        jmp     spiraal
 
+; Verwijder deze lus (Labo 4)
 ; .............
+HoofdProgrammaGedaan:
+        jmp     HoofdProgrammaGedaan
 
-; zet de onderbrekingen terug aan
-  sti
 
-; Hoofdprogramma dat registerwaarden checkt!
-  jmp checkprogramma
-
-;================================= Data ==================================
-; Zet hier al je data!
-teller  dd 0
-aan db 0
-huidige_positie_x dd 20
-huidige_positie_y dd 20
-spatie db " ", 0
-kruisje  db "X", 0
-
-;================================= Fix disassembly =======================
-; Omdat de disassembler de bovenstaande data gaat proberen interpreteren als
-; instructies, is het mogelijk dat de disassembly verstoord raakt, en dat dus
-; de eerste instructies in timerhandler fout interpreteert. Om dit te voorkomen
-; zetten we hier een aantal extra NOP-instructies (0x90) tussen, zodat timerhandler
-; zeker correct weergegeven wordt. Een x86 instructie is maximaal 15 bytes lang.
-
-TIMES 15 DB 0x90
+;================================= TAKEN ==============================
+Taak1:
+        mov     eax, 0
+        mov     ebx, 39
+        mov     ecx, 0
+        mov     edx, 9
+        jmp     spiraal
 
 
 
-;================================= handlers ==============================
+Taak2:
+	mov	eax,40	
+	mov	ebx,79
+	mov	ecx,0
+	mov	edx,9
+	jmp	spiraal
 
-timerhandler:  ; Facultatieve opgave
-; ...........
-  iret  
 
-toetsenbordhandler:
-; Vraag 3, 4 en 6
-; ...........
-  iret
+Taak3:
+        mov     eax, 0
+        mov     ebx, 79
+        mov     ecx, 10
+        mov     edx, 20
+        jmp     spiraal
 
+
+clockstring  db "Clockticks:", 0
+tscstring    db "TSC: ", 0
+takenstring  db "Taken: ", 0
+
+PrintInfoTaak:
+  ; Print informatie op het scherm
+  push  21
+  push  0
+  push  clockstring
+  call  printstring
+  add   esp, 12
+
+  push  21
+  push  22
+  push  tscstring
+  call  printstring
+  add   esp, 12
+
+  push  22
+  push  0
+  push  takenstring
+  call  printstring
+  add   esp, 12
+
+  ; Print de labels voor de taken:
+  mov   edi, 0
+.printLabels:
+  mov   eax, 13
+  imul  edi
+  add   eax, 7
+
+  ; Taaknummer
+
+  push  eax
+  push  edi
+
+  push  22
+  push  eax
+  push  edi
+
+  add   eax, 1
+  push  word 22
+  push  ax
+  push  word ':'
+
+  add   eax, 2
+  push  word 22
+  push  ax
+  push  word ','
+
+  call  printchar
+  call  printchar
+  call  printint
+  add   esp, 12
+
+  pop   edi
+  pop   eax
+
+  add   edi, 1
+
+  cmp   edi, MAX_TAKEN
+  jl    .printLabels
+  jmp   PrintInfoTaakLoop
+
+PrintInfoTaakLoop:
+  ; Print Tijd-Info
+  push  21
+  push  13
+  push  dword [Huidige_Tick]
+  call  printhex
+  add   esp, 12
+
+  push  21
+  push  28
+  rdtsc
+  push  edx
+  push  21
+  push  36
+  push  eax
+  call  printhex
+  add   esp, 12
+  call  printhex
+  add   esp, 12
+
+  ; Print taken-info:
+  lea   esi, [takenlijst]
+  mov   ecx, 0
+.printTaken:
+  mov   dword ebx, [esi+8*ecx]
+  ; Startpos op scherm
+  mov   eax, 13
+  imul  ecx
+
+  push  esi
+  push  ecx
+  push  ebx
+
+  add   eax, 11
+
+  ; Toon activatietijd (ook invullen indien taak getermineerd)
+  push  22
+  push  eax
+  push  dword [esi+8*ecx+4]
+
+  add   eax, -2
+  ; Toon status: A = Actief, T = geTermineerd
+  cmp   ebx, 0
+  je    .printgeTermineerd
+
+  push   word 22
+  push   ax
+  push   word 'A'
+
+  jmp    .nextTaak
+
+.printgeTermineerd:
+  push   word 22
+  push   ax
+  push   word 'T'
+
+  jmp   .nextTaak
+
+.nextTaak:
+  call   printchar
+  call   printhex
+  add   esp, 12
+
+  pop    ebx
+  pop    ecx
+  pop    esi
+
+  add   ecx, 1
+  cmp   ecx, MAX_TAKEN
+  jl    .printTaken
+
+  jmp   PrintInfoTaakLoop
+
+
+IdleTaak:
+        ; Schrijf naar het scherm dat de idle taak gebruikt wordt (niet van toepassing in dit practicum)
+        jmp     IdleTaak
+
+
+;================================= SCHEDULING ==============================
+
+creeertaak: ; Opgave 5
+; voeg een taak toe aan de takenlijst
+; oproepen als creeertaak(adres, stapel, wachttijd)
+; ....................
+
+
+creeer_idle_taak: ; Labo 4
+  ret
+
+
+termineertaak: ; Labo 4
+;
+; gooit de taak die deze routine oproept uit de takenlijst
+; en zet de uitvoering verder met een andere taak uit de takenlijst
+
+; ....................
+
+; Slaapt voor (minstens) eax ticks
+sleep:
+        pushfd
+        push    cs
+        push    ebx
+        pushad
+        lea     ebx, [awake]
+        mov     [esp+4*8], ebx
+        mov     ebx, [Huidige_Taak]
+        mov     dword [ebx],esp
+        mov     dword ecx, [Huidige_Tick]
+        add     eax, ecx
+        mov     dword [ebx + 4], eax
+        mov     edx, 0
+        cli
+        mov     esp, 0
+        jmp     schedulerhandler.taakzoeklus
+awake:
+        ret
+
+; Zorg ervoor dat GEEN TAAK geprint wordt als er geen taak gevonden wordt (Labo 4)
+; ..............
+schedulerhandler:
+        pushad
+        inc     dword [Huidige_Tick]
+        mov	al, 0x20
+        out	0x20, al
+        sti
+        mov	ebx, [Huidige_Taak]
+        mov	dword [ebx],esp
+        mov     dword [ebx + 4], 0
+        mov    ecx, [Huidige_Tick]
+	call	animatiestap
+        cli
+        mov     esp, 0
+.taakzoeklus:
+        add	ebx, 8
+        cmp	ebx, takenlijst + (MAX_TAKEN * 8)
+        jl	.nog_niet_aan_het_einde
+        lea	ebx, [takenlijst]
+.nog_niet_aan_het_einde:
+        cmp	dword [ebx],0
+        je	.taakzoeklus
+        cmp     dword [ebx+4], ecx
+        jg      .taakzoeklus
+        mov     [Huidige_Taak], ebx
+        mov     esp, [ebx]
+        popad
+        iret
+
+
+; Animatie om te zien of schedulerhandler opgeroepen wordt, ook al is er maar 1 taak:
+ANIM_X EQU 0
+ANIM_Y EQU 20
+ANIMATIE_FRAME db "/", 0
+CHECK_FAIL db "Check FAIL: ", 0
+
+animatiestap:
+pushad
+cmp	byte [ANIMATIE_FRAME], '/'
+je	animatie_1
+cmp	byte [ANIMATIE_FRAME], '-'
+je	animatie_2
+cmp	byte [ANIMATIE_FRAME], '\'
+je	animatie_3
+cmp	byte [ANIMATIE_FRAME], '|'
+je	animatie_4
+
+; Dit mag niet gebeuren!!!
+push ANIM_Y
+push ANIM_X
+push CHECK_FAIL
+call printstring
+; Gedaan! Loop oneindig!
+checkfailed_loop:
+jmp checkfailed_loop
+
+
+animatie_1:
+	mov byte [ANIMATIE_FRAME], '-'
+	jmp animatie_end
+animatie_2:
+	mov byte [ANIMATIE_FRAME], '\'
+	jmp animatie_end
+animatie_3:
+	mov byte [ANIMATIE_FRAME], '|'
+	jmp animatie_end
+animatie_4:
+	mov byte [ANIMATIE_FRAME], '/'
+	jmp animatie_end
+
+animatie_end:
+
+push word ANIM_Y
+push word ANIM_X
+push word [ANIMATIE_FRAME]
+call printchar
+popad
+
+ret
 
 ;================================= HULPFUNCTIES ==============================
 
@@ -396,7 +742,7 @@ install_handler:
 ;   adres van de nulgetermineerde string
 ;   kolom op het scherm (0..79)
 ;   rij op het scherm (0..24)
-;   
+; 
 printstring:
 	push	ebx
 	mov	eax,[esp+16]  ; rij
@@ -421,6 +767,7 @@ stop:
 ; Publieke hulpfuncties
 ; --------------------
 
+
 ; printint(het getal, kolom, rij)
 ; print een natuurlijk getal op het scherm
 ; argumenten:
@@ -429,7 +776,6 @@ stop:
 ; opmerking: het getal wordt omgezet in een stringvoorstelling die 
 ; gevisualiseerd wordt zonder leidende nullen.
 ;
-
 printint:
 	push	ebp
 	mov	ebp,esp
@@ -503,148 +849,8 @@ hex:	mov     [ebp-12+ecx],dl
 ;
 
 ShortDelay:
-  push  ecx
-  mov   ecx, Wachtlus
-.loop:  loop  .loop 
-  pop ecx
-  ret
-
-
-; printad(eax, ebx, ecx, edx, esi, edi, ebp, esp, eip, eflags, cs, ds, es, ss, fs, gs)
-; print de inhoud van de voornaamste registers uit op lijnen 22, 23, en 24.
-; 
-
-eaxstring db "eax:           ebx:           "
-    db "ecx:           edx:           eip:           ", 0
-esistring db "esi:           edi:           ",
-    db "ebp:           esp:           efg:           ", 0
-csstring  db "cs:          ds:          ",
-    db "es:          ss:          fs:          gs:     ", 0
-
-printad:
-  push  ebp
-  mov ebp,esp
-  pushad
-  push  22
-  push  0
-  push  eaxstring
-  call  printstring
-  add   esp, 12
-  push  23
-  push  0
-  push  esistring
-  call  printstring
-  add   esp, 12
-  push  24
-  push  0
-  push  csstring
-  call  printstring
-  add   esp, 12
-  push  22
-  push  5
-  push  dword [ebp+8]
-  call  printhex
-  add   esp, 12
-  push  22
-  push  20
-  push  dword [ebp+12]
-  call  printhex
-  add   esp, 12
-  push  22
-  push  35
-  push  dword [ebp+16]
-  call  printhex
-  add   esp, 12
-  push  22
-  push  50
-  push  dword [ebp+20]
-  call  printhex
-  add   esp, 12
-  push  22
-  push  65
-  push  dword [ebp+40]
-  call  printhex
-  add   esp, 12
-  push  23
-  push  5
-  push  dword [ebp+24]
-  call  printhex
-  add   esp, 12
-  push  23
-  push  20
-  push  dword [ebp+28]
-  call  printhex
-  add   esp, 12
-  push  23
-  push  35
-  push  dword [ebp+32]
-  call  printhex
-  add   esp, 12
-  push  23
-  push  50
-  push  dword [ebp+36]
-  call  printhex
-  add   esp, 12
-  push  23
-  push  65
-  push  dword [ebp+44]
-  call  printhex
-  add   esp, 12
-  push  24
-  push  4
-  push  dword [ebp+48]
-  call  printhex
-  add   esp, 12
-  push  24
-  push  17
-  push  dword [ebp+52]
-  call  printhex
-  add   esp, 12
-  push  24
-  push  30
-  push  dword [ebp+56]
-  call  printhex
-  add   esp, 12
-  push  24
-  push  43
-  push  dword [ebp+60]
-  call  printhex
-  add   esp, 12
-  push  24
-  push  56
-  push  dword [ebp+64]
-  call  printhex
-  add   esp, 12
-  push  24
-  push  69
-  push  dword [ebp+68]
-  call  printhex
-  add   esp, 12
-  popad
-  pop ebp
-  ret
-
-; printscancode(scancode)
-; print de hexadecimale voorstelling van het scancodebyte op lijn 21.
-;
-scancodestr db "Scancode: ",0 
-
-printscancode:
-  mov   eax, [esp+4]
-  push  21
-  push  10
-  and eax,0ffh
-  push  eax
-  push  21
-  push  0
-  push  scancodestr
-  call  printstring
-  add   esp, 12
-  call  printhex
-  add   esp, 12
-  ret
-
-
+        ; Deze functie wordt dit jaar niet gebruikt in de opgave
+	ret
 
 ; --------------------
 ; Private hulpfuncties
@@ -708,176 +914,9 @@ herbegin:
 	mov	si,'A'
 einde	ret
 
-; deze code initializeert alle registerwaarden op een constante waarde,
-; en checkt constant of het deze waarden nog bevat. Indien niet, is er
-; een interrupt handler die deze waarden fout herstelt, en wordt een
-; waarschuwing geprint! Bovendien gaat het een animatie verschijnen die
-; zal duidelijk maken wanneer deze code niet meer zou uitgevoerd
-; worden door het slecht buitengaan van de interrupt handler.
-; TODO: check ESP ook expliciet? Dit wordt enkel impliciet gecheck op dit moment
-; doordat we het huidige animatieteken daarin opslaan :-)
-CHECK_EAX EQU 0x12345678
-CHECK_EBX EQU 0xdeadbeef
-CHECK_ECX EQU 0xc0ffee00
-CHECK_EDX EQU 0x41424344
-CHECK_EBP EQU 0xbac01324
-CHECK_ESI EQU 0x794613ba
-CHECK_EDI EQU 0x90abcdef
-
-CHECK_X EQU 0
-CHECK_Y EQU 0
-ANIM_X EQU 12
-ANIM_Y EQU 0
-
-check_ok db "Check ok...", 0
-check_fail db "Check FAIL: ", 0
-fail_eax db "eax", 0
-fail_ebx db "ebx", 0
-fail_ecx db "ecx", 0
-fail_edx db "edx", 0
-fail_ebp db "ebp", 0
-fail_esi db "esi", 0
-fail_edi db "edi", 0
-fail_esp db "esp/stack", 0
-
-checkprogramma:
-
-; init
-mov	eax, CHECK_EAX
-mov	ebx, CHECK_EBX
-mov	ecx, CHECK_ECX
-mov	edx, CHECK_EDX
-mov	ebp, CHECK_EBP
-mov	esi, CHECK_ESI
-mov	edi, CHECK_EDI
-push	word '/' ; initiele animatietoestand
-
-checklus:
-cmp	eax, CHECK_EAX
-jne	checkfailed_eax
-cmp	ebx, CHECK_EBX
-jne	checkfailed_ebx
-cmp	ecx, CHECK_ECX
-jne	checkfailed_ecx
-cmp	edx, CHECK_EDX
-jne	checkfailed_edx
-cmp	ebp, CHECK_EBP
-jne	checkfailed_ebp
-cmp	esi, CHECK_ESI
-jne	checkfailed_esi
-cmp	edi, CHECK_EDI
-jne	checkfailed_edi
 
 
-animatie_start:
-cmp	word [esp], '/'
-je	animatie_1
-cmp	word [esp], '-'
-je	animatie_2
-cmp	word [esp], '\'
-je	animatie_3
-cmp	word [esp], '|'
-je	animatie_4
-
-jmp checkfailed_esp
-
-animatie_1:
-	mov word [esp], '-'
-	jmp animatie_end
-animatie_2:
-	mov word [esp], '\'
-	jmp animatie_end
-animatie_3:
-	mov word [esp], '|'
-	jmp animatie_end
-animatie_4:
-	mov word [esp], '/'
-	jmp animatie_end
-
-animatie_end:
-pushad
-push word ANIM_Y
-push word ANIM_X
-push word [esp+8*4+2*2] ; 8 van pushad, 2 van x en y, die slechts 2 BYTES ZIJN! IEW
-call printchar
-
-checkok:
-push CHECK_Y
-push CHECK_X
-push check_ok
-call printstring
-add  esp, 12
-
-popad
-
-jmp checklus
-
-; We hergebruiken de positie van de animatie
-checkfailed_eax:
-push ANIM_Y
-push ANIM_X
-push fail_eax
-jmp checkfailed
-
-checkfailed_ebx:
-push ANIM_Y
-push ANIM_X
-push fail_ebx
-jmp checkfailed
-
-checkfailed_ecx:
-push ANIM_Y
-push ANIM_X
-push fail_ecx
-jmp checkfailed
-
-checkfailed_edx:
-push ANIM_Y
-push ANIM_X
-push fail_edx
-jmp checkfailed
-
-checkfailed_ebp:
-push ANIM_Y
-push ANIM_X
-push fail_ebp
-jmp checkfailed
-
-checkfailed_esi:
-push ANIM_Y
-push ANIM_X
-push fail_esi
-jmp checkfailed
-
-checkfailed_edi:
-push ANIM_Y
-push ANIM_X
-push fail_edi
-jmp checkfailed
-
-checkfailed_esp:
-push ANIM_Y
-push ANIM_X
-push fail_esp
-jmp checkfailed
-
-
-
-checkfailed:
-push CHECK_Y
-push CHECK_X
-push check_fail
-call printstring
-add  esp, 12
-; Print wat we reeds hadden klaar gezet hiervoor in de register-fail blokken
-call printstring
-add  esp, 12
-; Gedaan! Loop oneindig!
-checkfailed_loop:
-jmp checkfailed_loop
-
-
-; deze code tekent een spiraal op het scherm in een gegeven rechthoek
+; deze routine tekent een spiraal op het scherm in een gegeven rechthoek
 ; input
 ;   ax = meest linkse kolom
 ;   bx = meest rechtse kolom
@@ -893,7 +932,7 @@ spiraal:
         shl     edx,16
 	mov	si,' '
 herstart:
-; Controleer hier of je taak mag stoppen na X ticks (Opgave 5 van practicum *4*)
+; Controleer hier of je taak mag stoppen na X ticks (Labo *4*)
 ; ..........
 	cmp	si,' '
 	je	letters
@@ -971,6 +1010,50 @@ lus5:	push	di
 	jge	lus5
         inc	ax
         jmp     lus1    
+
+
+debuggingstring1 db " Een stack gaat buiten het vooraf gedefinieerde gebied! ", 0
+debuggingstring2 db " ESP: ", 0
+debuggingstring3 db " EIP: ", 0
+debughandler:
+;jmp debughandler
+; timer afzetten, of staat die al af nu met deze interupt? ### TODO
+;ud2
+    push 0
+    push 0
+    push debuggingstring1
+    push 1
+    push 0
+    push debuggingstring2
+    push 2
+    push 0
+    push debuggingstring3
+
+    call printstring
+    add   esp, 12
+    call printstring
+    add   esp, 12
+    call printstring
+    add   esp, 12
+
+    mov eax, esp
+    add eax, 3*4
+    push 1
+    push 6
+    push eax
+    call printhex
+    add   esp, 12
+
+    push 2
+    push 6
+    mov eax, [esp+8]
+    push eax
+    call printhex
+    add   esp, 12
+
+.debugdone:
+    jmp .debugdone
+
 
 
 TotalSize		EQU	$-$$
