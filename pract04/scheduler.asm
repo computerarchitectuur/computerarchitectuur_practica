@@ -409,20 +409,46 @@ main:
         mov     dword [takenlijst], esp
         mov     dword [Huidige_Taak], takenlijst
 
-; installeer de schedulerhandler op de timeronderbreking en zet deze onderbreking aan (Opgave 6 van de voorbereiding)
+	; installeer de schedulerhandler op de timeronderbreking en zet deze onderbreking aan
+	push	schedulerhandler
+	push	32
+	call	install_handler
+	add	esp, 0x8
+	;; zet onderbreking aan
+        cli
+	in	al, 0x21
+	and	al, 11111110b
+	out	0x21, al
+        sti
+
 
 ; .............
 
-; Start de taken (Opgave 1 en Opgave 2)
+; Start de taken
 ; .............
+	;; installeer taak1
+	push	0
+	push	stapel1
+	push	Taak1
+	call	creeertaak
+	add	esp, 12	
 
-        mov     eax, 0
-        mov     ebx, 79
-        mov     ecx, 0
-        mov     edx, 20
-        jmp     spiraal
+	;; installeer taak2
+	push	2500
+	push	stapel2
+	push	Taak2
+	call	creeertaak
+	add	esp, 12	
 
-; Verwijder deze lus (Opgave 4)
+	;; installeer PrintInfoTaak
+	push	1000
+	push	infostapel
+	push	PrintInfoTaak
+	call	creeertaak
+	add	esp, 12	
+
+
+; Verwijder deze lus (Opgave 2)
 ; .............
 HoofdProgrammaGedaan:
         jmp     HoofdProgrammaGedaan
@@ -599,17 +625,65 @@ IdleTaak:
 
 ;================================= SCHEDULING ==============================
 
-creeertaak: ; Opgave 1
+creeertaak:
 ; voeg een taak toe aan de takenlijst
 ; oproepen als creeertaak(adres, stapel, wachttijd)
 ; ....................
+		mov	eax, [esp+4]	; adres
+	mov	ecx, [esp+8]	; stapel
+	mov	edx, [esp+12]	; wachttijd
+	;; initalisatie van de stapel
+	; sla huidige stapelpointer op in ebp
+	push	ebp
+	mov	ebp, esp
+	; verplaats esp naar BEGIN nieuwe stapel
+	lea	ecx, [ecx+STAPELGROOTTE]
+	mov	esp, ecx
+	; plaats eflags op de stapel, maar zorg dat IF=1!
+	pushfd
+	mov	ecx, [esp]
+	or	ecx, 0x200
+	mov	[esp], ecx
+	; plaats cs op de stapel
+	push	cs
+	; plaats eip op de stapel
+	push	eax
+	; esp in eax steken, om correcte waarde van esp te kunnen pushen
+	mov	eax, esp
+	; imiteer een pushad
+	push	dword 0		; eax
+	push	dword 0		; ecx
+	push	dword 0		; edx
+	push	dword 0		; ebx
+	push	eax		; esp
+	push	dword 0		; ebp
+	push	dword 0		; esi
+	push	dword 0		; edi
+	;; initialisatie van de takenlijst:
+        cli
+        lea	ecx, [takenlijst - 8]
+.leegzoeklus:
+        add	ecx, 8
+        cmp	dword [ecx], 0
+        jne	.leegzoeklus
+	; plaats de correct esp in de takenlijst
+	mov	dword[ecx], esp
+ 	; plaats de correcte tijd in de takenlijst
+	mov	eax, [Huidige_Tick]
+	add	eax, edx	
+	mov	dword[ecx+4], edx
+	sti
+	; keer terug naar de oorspronkelijke stapel
+	mov	esp, ebp
+	pop	ebp
 	ret
 
-creeer_idle_taak: ; Niet van toepassing in dit practicum!
+
+creeer_idle_taak: ; Vraag 4
   ret
 
 
-termineertaak: ; Opgave 3
+termineertaak: ; Vraag 1
 ;
 ; gooit de taak die deze routine oproept uit de takenlijst
 ; en zet de uitvoering verder met een andere taak uit de takenlijst
@@ -636,7 +710,9 @@ sleep:
 awake:
         ret
 
-; Zorg ervoor dat GEEN TAAK geprint wordt als er geen taak gevonden wordt (Opgave 5)
+; Zorg ervoor dat GEEN TAAK geprint wordt als er geen taak gevonden wordt (Vraag 4)
+; en zorg er voor dat de idle taak gescheduled kan worden indien er anders geen taken
+; beschikbaar zijn (Vraag 5)
 ; ..............
 schedulerhandler:
         pushad
@@ -648,6 +724,7 @@ schedulerhandler:
         mov	dword [ebx],esp
         mov     dword [ebx + 4], 0
         mov    ecx, [Huidige_Tick]
+	call	animatiestap
         cli
         mov     esp, 0
 .taakzoeklus:
@@ -665,6 +742,56 @@ schedulerhandler:
         popad
         iret
 
+
+; Animatie om te zien of schedulerhandler opgeroepen wordt, ook al is er maar 1 taak:
+ANIM_X EQU 0
+ANIM_Y EQU 20
+ANIMATIE_FRAME db "/", 0
+CHECK_FAIL db "Check FAIL: ", 0
+
+animatiestap:
+pushad
+cmp	byte [ANIMATIE_FRAME], '/'
+je	animatie_1
+cmp	byte [ANIMATIE_FRAME], '-'
+je	animatie_2
+cmp	byte [ANIMATIE_FRAME], '\'
+je	animatie_3
+cmp	byte [ANIMATIE_FRAME], '|'
+je	animatie_4
+
+; Dit mag niet gebeuren!!!
+push ANIM_Y
+push ANIM_X
+push CHECK_FAIL
+call printstring
+; Gedaan! Loop oneindig!
+checkfailed_loop:
+jmp checkfailed_loop
+
+
+animatie_1:
+	mov byte [ANIMATIE_FRAME], '-'
+	jmp animatie_end
+animatie_2:
+	mov byte [ANIMATIE_FRAME], '\'
+	jmp animatie_end
+animatie_3:
+	mov byte [ANIMATIE_FRAME], '|'
+	jmp animatie_end
+animatie_4:
+	mov byte [ANIMATIE_FRAME], '/'
+	jmp animatie_end
+
+animatie_end:
+
+push word ANIM_Y
+push word ANIM_X
+push word [ANIMATIE_FRAME]
+call printchar
+popad
+
+ret
 
 ;================================= HULPFUNCTIES ==============================
 
@@ -798,7 +925,7 @@ hex:	mov     [ebp-12+ecx],dl
 ;
 
 ShortDelay:
-        ; Deze functie wordt dit jaar niet gebruikt in de opgave
+        ; ..... (Opgave 5)
 	ret
 
 ; --------------------
@@ -881,7 +1008,7 @@ spiraal:
         shl     edx,16
 	mov	si,' '
 herstart:
-; Controleer hier of je taak mag stoppen na X ticks (Opgave 5 van practicum *4*)
+; Controleer hier of je taak mag stoppen na X ticks (Vraag 3)
 ; ..........
 	cmp	si,' '
 	je	letters
