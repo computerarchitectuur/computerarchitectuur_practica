@@ -27,6 +27,7 @@ BRLE     | I  |r1,j
 MEMCMP   | R  |r3,r1,r2
 HALT     | J  |
 BRNE     | I  |r1,j
+BRMEMEQ  | I  |r1,r2,j
 
 [Microprogrammed Architecture]
 MicroCodeSize=256
