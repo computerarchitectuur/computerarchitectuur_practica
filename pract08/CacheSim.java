@@ -136,11 +136,11 @@ public class CacheSim {
     if (matrix.compareTo("A")==0)
       base = 0;
     else if (matrix.compareTo("B")==0)
-      base = 4*size*size + 64;
+      base = 4*size*size + 32;
     else if (matrix.compareTo("Cread")==0)
-      base = 8*size*size + 96 ;
+      base = 8*size*size + 128 ;
     else if (matrix.compareTo("Cwrite")==0)
-      base = 8*size*size + 96 ;
+      base = 8*size*size + 128;
     else
     {
       System.err.println("Matrix " + matrix + "not recognized, please use A, B or C");
