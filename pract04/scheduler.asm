@@ -680,13 +680,21 @@ creeertaak:
 
 
 creeer_idle_taak: ; Vraag 4
-  ret
+; ....................
+	ret
+
+huidige_taak_nummer: ; Vraag 2
+; Geeft de index in de takenlijst terug die overeenkomt met de huidige taak
+; ....................
+	ret
 
 
 termineertaak: ; Vraag 1
-;
-; gooit de taak die deze routine oproept uit de takenlijst
+; Krijgt een getal mee als argument dat overeenkomt met het taakslotnummer
+; van de taak die getermineerd moet worden.
+; termineertaak gooit de taak die deze routine oproept uit de takenlijst
 ; en zet de uitvoering verder met een andere taak uit de takenlijst
+; termineertaak(taakslotnummer)
 
 ; ....................
 
