@@ -34,7 +34,7 @@ ADDI     |Addi         |
 BRGE     |Brge         |             
 JUMP     |Jump         |             
 MULT     |Mult         |             
-MSAC     |             |             
+ASAC     |             |             
 DBRGE    |             |             
 SUB      |Sub          |             
 BRLE     |Brle         |             
