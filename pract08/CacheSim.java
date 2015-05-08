@@ -38,7 +38,7 @@ public class CacheSim {
     Option blocksOpt   = OptionBuilder.withArgName("blocks")
                                       .hasArg()
                                       .isRequired()
-                                      .withDescription("")
+                                      .withDescription("The number of blocks in the cache")
                                       .create("blocks");
     Option linesizeOpt = OptionBuilder.withArgName("linesize")
                                       .hasArg()
@@ -54,6 +54,10 @@ public class CacheSim {
                                       .isRequired()
                                       .withDescription("Address pattern to simulate. Can by one of rowMajor, columnMajor, matrixMultiply or matrixTiledMultiply")
                                       .create("pattern");
+    Option bAddressOpt = OptionBuilder.withArgName("Bstartaddress")
+                                      .hasArg()
+                                      .withDescription("Start address of array B. If not set, a default, sensible value is used. Only works for rowMajor and columnMajor.")
+                                      .create("Bstartaddress");
 
     Options options = new Options();
     options.addOption(cacheOpt);
@@ -61,6 +65,7 @@ public class CacheSim {
     options.addOption(linesizeOpt);
     options.addOption(assocOpt);
     options.addOption(patternOpt);
+    options.addOption(bAddressOpt);
 
     HelpFormatter formatter = new HelpFormatter();
 
@@ -103,11 +108,22 @@ public class CacheSim {
       }
 
       String pattern = line.getOptionValue("pattern");
+
+      boolean b_start_address_set = line.hasOption("Bstartaddress");
+      int b_start_address = 0;
+      if (b_start_address_set) {
+        b_start_address = Integer.parseInt(line.getOptionValue("Bstartaddress"));
+
+        if (!pattern.equals("rowMajor") && !pattern.equals("columnMajor")) {
+          throw new OptionError("the option Bstartaddress is only supported for the patterns rowMajor and columnMajor");
+        }
+      }
+
       if(pattern.equals("rowMajor")) {
-        rowMajor(cache, 8);
+        rowMajor(cache, 8, b_start_address_set, b_start_address);
       }
       else if(pattern.equals("columnMajor")) {
-        columnMajor(cache, 8);
+        columnMajor(cache, 8, b_start_address_set, b_start_address);
       }
       else if(pattern.equals("matrixMultiply")) {
         matrixMultiply(cache, 8);
@@ -128,6 +144,24 @@ public class CacheSim {
 
   }
 
+  /* TODO urgh this is static */
+  private static int b_start_address = -1;
+  public static int getBStartAddress() {
+    if (b_start_address == -1) {
+      System.err.println("B Start Address is not yet set!");
+      System.exit(-1);
+    }
+    return b_start_address;
+  }
+  /* If start == -1, the base will be automatically set to a sensible value. */
+  public static void setBStartAddress(int matrix_size, int start) {
+    if (start == -1) {
+      b_start_address = 4*matrix_size*matrix_size + 64;
+    } else {
+      b_start_address = start;
+    }
+  }
+
 
   private static boolean sendCacheRequest(Cache cache, String matrix, int i, int j, int size) {
     // different matrices are located in different places in the memory, this
@@ -136,9 +170,9 @@ public class CacheSim {
     if (matrix.compareTo("A")==0)
       base = 0;
     else if (matrix.compareTo("B")==0)
-      base = 4*size*size + 32;
+      base = getBStartAddress();
     else if (matrix.compareTo("Cread")==0)
-      base = 8*size*size + 128 ;
+      base = 8*size*size + 128;
     else if (matrix.compareTo("Cwrite")==0)
       base = 8*size*size + 128;
     else
@@ -161,11 +195,16 @@ public class CacheSim {
 
 
 	// This function generates the access pattern.
-	private static void rowMajor(Cache cache, int size)
+	private static void rowMajor(Cache cache, int size, boolean b_start_address_set, int b_start_address)
 	{
 		// Statistics
 		int requests = 0;
 		int hits = 0;
+
+		if (b_start_address_set)
+		  setBStartAddress(size, b_start_address);
+		else
+		  setBStartAddress(size, -1);
 
 		// Input matrix
 		int A[][] = new int[size][size];
@@ -258,7 +297,7 @@ public class CacheSim {
 
 
 	// This function generates the access pattern.
-	private static void columnMajor(Cache cache, int size)
+	private static void columnMajor(Cache cache, int size, boolean b_start_address_set, int b_start_address)
 	{
 		// Statistics
 		int requests = 0;
@@ -267,6 +306,12 @@ public class CacheSim {
 		// Input matrix
 		int A[][] = new int[size][size];
 		int B[][] = new int[size][size];
+
+		if (b_start_address_set)
+		  setBStartAddress(size, b_start_address);
+		else
+		  setBStartAddress(size, -1);
+
 
 		// Initialize matrix
 		int counter = 1;
@@ -364,6 +409,8 @@ public class CacheSim {
 		int A[][] = new int[size][size];
 		int B[][] = new int[size][size];
 		int C[][] = new int[size][size];
+
+		setBStartAddress(size, -1);
 
 		// Initialize matrix
 		for (int i=0;i<size;i++)
@@ -501,6 +548,8 @@ public class CacheSim {
 		int A[][] = new int[size][size];
 		int B[][] = new int[size][size];
 		int C[][] = new int[size][size];
+
+		setBStartAddress(size, -1);
 
 		// Initialize matrix
 		for (int i=0;i<size;i++)
