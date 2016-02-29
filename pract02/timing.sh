@@ -10,7 +10,7 @@ fi
 
 n=$1
 iteraties=1000
-PROG=perrin
+PROG=padovan
 
 rm ./${PROG}
 make pract02
@@ -28,40 +28,39 @@ cat output | grep "Gesimuleerde" # | awk '{print $4}'
 echo # Empty line
 
 correctnesscheck() {
-   correctewaarden[0]=3
-   correctewaarden[1]=0
-   correctewaarden[2]=2
-   correctewaarden[3]=3
-   correctewaarden[4]=2
-   correctewaarden[5]=5
-   correctewaarden[6]=5
-   correctewaarden[7]=7
-   correctewaarden[8]=10
-   correctewaarden[9]=12
-   correctewaarden[10]=17
-   correctewaarden[11]=22
-   correctewaarden[12]=29
-   correctewaarden[13]=39
-   correctewaarden[14]=51
-   correctewaarden[15]=68
-   correctewaarden[16]=90
-   correctewaarden[17]=119
-   correctewaarden[18]=158
-   correctewaarden[19]=209
-   correctewaarden[20]=277
-   correctewaarden[21]=367
-   correctewaarden[22]=486
-   correctewaarden[23]=644
-   correctewaarden[24]=853
-   correctewaarden[25]=1130
-   correctewaarden[26]=1497
-   correctewaarden[27]=1983
-   correctewaarden[28]=2627
-   correctewaarden[29]=3480
-   correctewaarden[30]=4610
-   correctewaarden[31]=6107
-   correctewaarden[32]=8090
-   correctewaarden[33]=10717
+  correctewaarden[1]=1
+  correctewaarden[2]=1
+  correctewaarden[3]=1
+  correctewaarden[4]=2
+  correctewaarden[5]=2
+  correctewaarden[6]=3
+  correctewaarden[7]=4
+  correctewaarden[8]=5
+  correctewaarden[9]=7
+  correctewaarden[10]=9
+  correctewaarden[11]=12
+  correctewaarden[12]=16
+  correctewaarden[13]=21
+  correctewaarden[14]=28
+  correctewaarden[15]=37
+  correctewaarden[16]=49
+  correctewaarden[17]=65
+  correctewaarden[18]=86
+  correctewaarden[19]=114
+  correctewaarden[20]=151
+  correctewaarden[21]=200
+  correctewaarden[22]=265
+  correctewaarden[23]=351
+  correctewaarden[24]=465
+  correctewaarden[25]=616
+  correctewaarden[26]=816
+  correctewaarden[27]=1081
+  correctewaarden[28]=1432
+  correctewaarden[29]=1897
+  correctewaarden[30]=2513
+  correctewaarden[31]=3329
+  correctewaarden[32]=4410
+  correctewaarden[33]=5842
 
    i=$n
    result=`./${PROG} $i 1 | cut '-d=' -f2 | cut -'d ' -f2 `
