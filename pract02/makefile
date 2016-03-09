@@ -5,11 +5,11 @@ all:
 	@$(ECHO) "Let op! assembly OVERSCHRIJFT padovan.s!!!!!"
 
 assembly:
-	gcc -o padovan.s -O0 -c -S padovan.c
+	gcc -m32 -o padovan.s -O0 -c -S padovan.c
 pract02:
-	gcc -g -o padovan padovan.s
+	gcc -m32 -g -o padovan padovan.s
 pract02_opt:
-	gcc -O1 -c -S -m32 -o perrin_opt.s padovan.c
-	gcc -O1 -m32 padovan.c -o perrin_opt
+	gcc -m32 -O1 -ftree-loop-im -c -S -o padovan_opt.s padovan.c
+	gcc -m32 -O1 -ftree-loop-im padovan.c -o padovan_opt
 clean:
-	rm -rf padovan perrin_opt
+	rm -rf padovan padovan_opt
