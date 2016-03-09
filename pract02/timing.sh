@@ -22,7 +22,7 @@ then
 fi
 
 $VALGRIND --tool=cachegrind --cachegrind-out-file=timing.out ./${PROG} $n $iteraties &> output
-cat output | grep perrin
+cat output | grep padovan
 cat output | grep "Gesimuleerde" # | awk '{print $4}'
 
 echo # Empty line
