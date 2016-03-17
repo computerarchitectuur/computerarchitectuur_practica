@@ -402,6 +402,7 @@ main:
         push ebx
         push 1
         call install_handler
+        add esp, 8
 
 
         ; We gaan over naar een voorgedefinieerde stapel en stoppen het hoofdprogramma in de lijst
