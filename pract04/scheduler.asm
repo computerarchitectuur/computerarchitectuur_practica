@@ -708,12 +708,12 @@ sleep:
         lea     ebx, [awake]
         mov     [esp+4*8], ebx
         mov     ebx, [Huidige_Taak]
+        cli
         mov     dword [ebx],esp
         mov     dword ecx, [Huidige_Tick]
         add     eax, ecx
         mov     dword [ebx + 4], eax
         mov     edx, 0
-        cli
         mov     esp, 0
         jmp     schedulerhandler.taakzoeklus
 awake:
