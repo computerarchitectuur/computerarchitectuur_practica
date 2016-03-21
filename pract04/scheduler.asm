@@ -699,8 +699,10 @@ termineertaak: ; Vraag 1
 
 ; ....................
 
-; Slaapt voor (minstens) eax ticks
+; sleep(nr_ticks): Slaapt voor (minstens) nr_ticks ticks
 sleep:
+        mov [esp+4], eax
+        pushad ; Do not clobber any registers
         pushfd
         push    cs
         push    ebx
@@ -717,6 +719,7 @@ sleep:
         mov     esp, 0
         jmp     schedulerhandler.taakzoeklus
 awake:
+        popad
         ret
 
 ; Zorg ervoor dat GEEN TAAK geprint wordt als er geen taak gevonden wordt (Vraag 4)
