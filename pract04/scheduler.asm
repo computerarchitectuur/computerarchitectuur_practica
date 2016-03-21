@@ -680,7 +680,7 @@ creeertaak:
 	ret
 
 
-creeer_idle_taak: ; Vraag 4
+creeer_idle_taak: ; Vraag 5
 ; ....................
 	ret
 
@@ -690,7 +690,7 @@ huidige_taak_nummer: ; Vraag 2
 	ret
 
 
-termineertaak: ; Vraag 1
+termineertaak: ; Vraag 1, Vraag 2
 ; Krijgt een getal mee als argument dat overeenkomt met het taakslotnummer
 ; van de taak die getermineerd moet worden.
 ; termineertaak gooit de taak die deze routine oproept uit de takenlijst
@@ -698,6 +698,15 @@ termineertaak: ; Vraag 1
 ; termineertaak(taakslotnummer)
 
 ; ....................
+
+termineertaak_delayed: ; Vraag 3
+; Krijgt een getal mee als argument dat overeenkomt met het taakslotnummer
+; van de taak die getermineerd moet worden. Het tweede argument is
+; de delay waarna deze taak getermineerd moet worden.
+; Het delayed termineren zelf moet gebeuren in de schedulerhandler.
+
+; ....................
+
 
 ; sleep(nr_ticks): Slaapt voor (minstens) nr_ticks ticks
 sleep:
@@ -722,6 +731,7 @@ awake:
         popad
         ret
 
+; Zorg ervoor dat taken delayed getermineerd kunnen worden (Vraag 3)
 ; Zorg ervoor dat GEEN TAAK geprint wordt als er geen taak gevonden wordt (Vraag 4)
 ; en zorg er voor dat de idle taak gescheduled kan worden indien er anders geen taken
 ; beschikbaar zijn (Vraag 5)
