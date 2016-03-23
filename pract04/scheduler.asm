@@ -672,7 +672,7 @@ creeertaak:
  	; plaats de correcte tijd in de takenlijst
 	mov	eax, [Huidige_Tick]
 	add	eax, edx	
-	mov	dword[ecx+4], edx
+	mov	dword[ecx+4], eax
 	sti
 	; keer terug naar de oorspronkelijke stapel
 	mov	esp, ebp
