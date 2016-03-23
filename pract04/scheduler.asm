@@ -569,7 +569,8 @@ PrintInfoTaakLoop:
   lea   esi, [takenlijst]
   mov   ecx, 0
 .printTaken:
-  mov   dword ebx, [esi+8*ecx]
+  imul  edx, ecx, 8
+  mov   dword ebx, [esi+edx]
   ; Startpos op scherm
   mov   eax, 13
   imul  ecx
@@ -583,7 +584,8 @@ PrintInfoTaakLoop:
   ; Toon activatietijd (ook invullen indien taak getermineerd)
   push  22
   push  eax
-  push  dword [esi+8*ecx+4]
+  imul  edx, ecx, 8
+  push  dword [esi+edx+4]
 
   add   eax, -2
   ; Toon status: A = Actief, T = geTermineerd
