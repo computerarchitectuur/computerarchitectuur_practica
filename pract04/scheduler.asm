@@ -712,7 +712,7 @@ termineertaak_delayed: ; Vraag 3
 
 ; sleep(nr_ticks): Slaapt voor (minstens) nr_ticks ticks
 sleep:
-        mov [esp+4], eax
+        mov eax, [esp+4]
         pushad ; Do not clobber any registers
         pushfd
         push    cs
