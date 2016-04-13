@@ -40,4 +40,5 @@ BRLE     |Brle         |
 MEMCMP   |             |             
 HALT     |             |             
 BRNE     |             |             
+BRMEMEQ  |             |             
 
