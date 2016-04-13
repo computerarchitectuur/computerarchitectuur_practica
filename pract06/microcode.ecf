@@ -8,7 +8,7 @@ CodeMemorySize=256
 
 [Instruction Encoding]
 NumberOfOpcodes=64
-NumberOfRegisters=16
+NumberOfRegisters=32
 
 [Instructions]
 ;Opcode  |Type|Mnemonic Representation
