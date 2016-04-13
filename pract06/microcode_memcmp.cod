@@ -1,17 +1,17 @@
 [Code Memory Content]
-0000: 100C0008 |            | ADDI   R3,0x00008,R0
-0004: 10040100 |            | ADDI   R1,0x00100,R0
-0008: 10080120 |            | ADDI   R2,0x00120,R0
+0000: 100C0008 |            | ADDI   R0,0x00008,R3
+0004: 10040100 |            | ADDI   R0,0x00100,R1
+0008: 10080120 |            | ADDI   R0,0x00120,R2
 000C: 2CC00028 | BEGIN      | BRLE   R3,END
 0010: 04540000 |            | LD     R5,0x00000(R1)
 0014: 04980000 |            | LD     R6,0x00000(R2)
-0018: 29954000 |            | SUB    R5,R6,R5
+0018: 29954000 |            | SUB    R6,R5,R5
 001C: 39400010 |            | BRNE   R5,SETRESULT
 0020: 10440004 |            | ADDI   R1,0x00004,R1
 0024: 10880004 |            | ADDI   R2,0x00004,R2
 0028: 10CFFFFF |            | ADDI   R3,0x3FFFF,R3
 002C: 1803FFDC |            | JUMP   BEGIN
-0030: 0C14C000 | SETRESULT  | ADD    R3,R5,R0
+0030: 0C14C000 | SETRESULT  | ADD    R0,R5,R3
 0034: 18000004 |            | JUMP   DONE
 0038: 100C0000 | END        | ADDI   R3,0x00000,R0
 003C: 34000000 | DONE       | HALT   
