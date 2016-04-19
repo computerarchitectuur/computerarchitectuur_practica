@@ -19,7 +19,7 @@
 0010 |Sub   |SUB   |A     |B     |C     |      |      |True  |Wb    |      |      |      |      
 0011 |Brle  |S1    |A     |      |      |      |      |GT    |Fetch |      |      |      |      
 0012 |      |ADD   |PC    |IR    |PC    |Word  |      |True  |Fetch |      |      |      |      
-0013 |Msac  |      |      |      |      |      |      |      |      |      |      |      |      
+0013 |Dosa  |      |      |      |      |      |      |      |      |      |      |      |      
 0014 |Dbrge |      |      |      |      |      |      |      |      |      |      |      |      
 0015 |Brne  |      |      |      |      |      |      |      |      |      |      |      |      
 0016 |Memcmp|      |      |      |      |      |      |      |      |      |      |      |      
@@ -34,7 +34,7 @@ ADDI     |Addi         |
 BRGE     |Brge         |             
 JUMP     |Jump         |             
 MULT     |Mult         |             
-ASAC     |             |             
+DOSA     |             |             
 DBRGE    |             |             
 SUB      |Sub          |             
 BRLE     |Brle         |             
