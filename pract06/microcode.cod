@@ -8,7 +8,7 @@
 0018: 1C842000 |            | MULT    R4,R4,R4
 001C: 1CA52800 |            | MULT    R5,R5,R5
 0020: 28852000 |            | SUB     R4,R5,R4
-0024: 0C812000 |            | ADD     R4,R1,R4
+0024: 0C810800 |            | ADD     R4,R1,R1
 0028: 28461000 |            | SUB     R2,R6,R2
 002C: 1440FFE0 | TEST       | BRGE    R2,LOOP
 0030: 080100FC |            | ST      R1,0x00FC(R0)
