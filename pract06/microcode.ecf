@@ -24,7 +24,7 @@ DOSA     | R  |r1,r2,r3
 DBRGE    | I  |r1,r2,j
 SUB      | R  |r1,r2,r3
 BRLE     | I  |r1,j
-MEMCMP   | R  |r3,r1,r2
+MEMCMP   | R  |r1,r2,r3
 HALT     | J  |
 BRNE     | I  |r1,j
 BRMEMEQ  | I  |r1,r2,j
