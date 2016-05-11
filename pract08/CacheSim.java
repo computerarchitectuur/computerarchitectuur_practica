@@ -45,10 +45,10 @@ public class CacheSim {
                                       .isRequired()
                                       .withDescription("")
                                       .create("linesize");
-    Option assocOpt    = OptionBuilder.withArgName("assoc")
+    Option assocOpt    = OptionBuilder.withArgName("ways")
                                       .hasArg()
-                                      .withDescription("Associativity of the cache. Ignored for a direct mapped cache and a fully associative cache.")
-                                      .create("assoc");
+                                      .withDescription("Number of ways of the cache. Ignored for a direct mapped cache and a fully associative cache.")
+                                      .create("ways");
     Option patternOpt  = OptionBuilder.withArgName("pattern")
                                       .hasArg()
                                       .isRequired()
@@ -97,7 +97,7 @@ public class CacheSim {
         cache = new FullyAssociativeCache(blocks, linesize);
       }
       else if(ctype.equals("NWaySetAssociative")) {
-        int assoc = Integer.parseInt(line.getOptionValue("assoc"));
+        int assoc = Integer.parseInt(line.getOptionValue("ways"));
         if(blocks % assoc != 0) {
           throw new OptionError("Whoops. blocks should be a multiple of the associativity in a n-way set associative cache");
         }
@@ -156,7 +156,7 @@ public class CacheSim {
   /* If start == -1, the base will be automatically set to a sensible value. */
   public static void setBStartAddress(int matrix_size, int start) {
     if (start == -1) {
-      b_start_address = 4*matrix_size*matrix_size + 64;
+      b_start_address = 4*matrix_size*matrix_size + 32;
     } else {
       b_start_address = start;
     }
