@@ -3,11 +3,11 @@
 int padovan(int n) {
   int result = 0;
 
-  if (n == 1)
+  if (n == 0)
+    result = 1;
+  else if (n == 1)
     result = 1;
   else if (n == 2)
-    result = 1;
-  else if (n == 3)
     result = 1;
   else
   {
