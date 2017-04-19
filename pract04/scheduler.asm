@@ -449,7 +449,7 @@ main:
 	add	esp, 12	
 
 
-; Verwijder deze lus (Opgave 2)
+; Verwijder deze lus (Opgave 3)
 ; .............
 HoofdProgrammaGedaan:
         jmp     HoofdProgrammaGedaan
@@ -698,7 +698,7 @@ huidige_taak_offset: ; Vraag 1
 	ret
 
 print_huidige_taak_offset: ; Vraag 1
-; heeft als argumenten (rij, kolom), en print op die locatie af:
+; heeft als argumenten (kolom, rij), en print op die locatie af:
 ; "Hier draait taak: " + het resultaat van huidige_taak_offset (gebruik hiervoor printstring en printint)
 ; .....
 	ret
