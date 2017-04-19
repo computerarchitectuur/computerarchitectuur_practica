@@ -962,6 +962,9 @@ hex:	mov     [ebp-12+ecx],dl
 
 ShortDelay:
         ; ..... (Opgave 5)
+        ; OPGELET! Deze functie wordt opgeroepen op plaatsen
+        ; die NIET uitgaan van de calling conventies! Zorg er hier
+        ; dus voor dat alle registers bewaard en hersteld worden!
 	ret
 
 ; --------------------
