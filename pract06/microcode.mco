@@ -17,12 +17,12 @@
 000E |      |      |      |      |      |      |      |True  |Fetch |      |      |      |      
 000F |Mult  |MUL   |A     |B     |C     |      |      |True  |Wb    |      |      |      |      
 0010 |Sub   |SUB   |A     |B     |C     |      |      |True  |Wb    |      |      |      |      
-0011 |Brle  |S1    |A     |      |      |      |      |GT    |Fetch |      |      |      |      
+0011 |Brne  |S1    |A     |      |      |      |      |EQ    |Fetch |      |      |      |      
 0012 |      |ADD   |PC    |IR    |PC    |Word  |      |True  |Fetch |      |      |      |      
-0013 |Dosa  |      |      |      |      |      |      |      |      |      |      |      |      
-0014 |Dbrge |      |      |      |      |      |      |      |      |      |      |      |      
-0015 |Brne  |      |      |      |      |      |      |      |      |      |      |      |      
-0016 |Memcmp|      |      |      |      |      |      |      |      |      |      |      |      
+0013 |Fma   |      |      |      |      |      |      |      |      |      |      |      |      
+0014 |Dbrne |      |      |      |      |      |      |      |      |      |      |      |      
+0015 |Brle  |      |      |      |      |      |      |      |      |      |      |      |      
+0016 |Inproduct|      |      |      |      |      |      |      |      |      |      |      |      
 
 [Jump Tables]
 ;Opcode  |Jump Table 1 |Jump Table 2 
@@ -31,15 +31,15 @@ LD       |LdSt         |Load
 ST       |LdSt         |Store        
 ADD      |Add          |             
 ADDI     |Addi         |             
-BRGE     |Brge         |             
+BRGE     |             |             
 JUMP     |Jump         |             
 MULT     |Mult         |             
-DOSA     |             |             
-DBRGE    |             |             
+FMA      |             |             
+DBRNE    |             |             
 SUB      |Sub          |             
-BRLE     |Brle         |             
+BRLE     |             |             
 MEMCMP   |             |             
-HALT     |Halt         |             
-BRNE     |             |             
-BRMEMEQ  |             |             
+HALT     |             |             
+BRNE     |Brne         |             
+INPRODUCT|             |             
 
