@@ -156,7 +156,7 @@ public class CacheSim {
   /* If start == -1, the base will be automatically set to a sensible value. */
   public static void setBStartAddress(int matrix_size, int start) {
     if (start == -1) {
-      b_start_address = 4*matrix_size*matrix_size + 32;
+      b_start_address = 4*matrix_size*matrix_size + 64;
     } else {
       b_start_address = start;
     }
