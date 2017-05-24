@@ -11,16 +11,7 @@ import org.apache.commons.cli.*;
 public class CacheSim {
 
   public static boolean isPowerOf2(int n) {
-    if (n == 1) {
-      return true;
-    }
-
-    if (n % 2 != 0) {
-      return false;
-    }
-    else {
-      return isPowerOf2(n / 2);
-    }
+    return (n & (n-1)) == 0;
   }
 
   private static class OptionError extends Exception {
@@ -213,7 +204,7 @@ public class CacheSim {
 		// Initialize matrix
 		int counter = 1;
 		for (int i=0;i<size;i++)
-		{	
+		{
 			for (int j=0;j<size;j++)
 			{
 				A[ i ][ j ] = counter++;
@@ -228,7 +219,7 @@ public class CacheSim {
 		// A
 		//System.out.println("A=\t");
 		//for (int i=0;i<size;i++)
-		//{	
+		//{
 			//System.out.println("\t");
 			//for (int j=0;j<size;j++)
 			//{
@@ -240,19 +231,19 @@ public class CacheSim {
 
 		// Now do B = A*2
 		for (int i=0;i<size;i++)
-		{	
+		{
 			for (int j=0;j<size;j++)
 			{
 				B[ i ][ j ] = A[ i ][ j ]*2;
 
 				// Forward the access to the cache.
 				requests++;
-				if (sendCacheRequest(cache, "A", i, j, size)) 
+				if (sendCacheRequest(cache, "A", i, j, size))
 				{
 					hits++;
 				}
 				requests++;
-				if (sendCacheRequest(cache, "B", i, j, size)) 
+				if (sendCacheRequest(cache, "B", i, j, size))
 				{
 					hits++;
 				}
@@ -264,11 +255,11 @@ public class CacheSim {
 		//System.out.println("////////////////////////////////////////////////////////////////////////////////");
 		//System.out.println("/////////////////////////////// Output Matrix //////////////////////////////////");
 		//System.out.println("////////////////////////////////////////////////////////////////////////////////");
-		// B 
+		// B
 		//System.out.println("A=\t");
 
 		//for (int i=0;i<size;i++)
-		//{	
+		//{
 			//System.out.println("\t");
 			//for (int j=0;j<size;j++)
 			//{
@@ -281,7 +272,7 @@ public class CacheSim {
 
 		// Force a cache dump (optional)
 		//cache.request(-1);
-		
+
 		// Report the results of the simulation.
 		System.out.println("////////////////////////////////////////////////////////////////////////////////");
 		System.out.println("//////////////////////////////// Statistics ////////////////////////////////////");
@@ -316,7 +307,7 @@ public class CacheSim {
 		// Initialize matrix
 		int counter = 1;
 		for (int i=0;i<size;i++)
-		{	
+		{
 			for (int j=0;j<size;j++)
 			{
 				A[ i ][ j ] = counter++;
@@ -331,7 +322,7 @@ public class CacheSim {
 		// A
 		//System.out.println("A=\t");
 		//for (int i=0;i<size;i++)
-		//{	
+		//{
 		//	System.out.println("\t");
 		//	for (int j=0;j<size;j++)
 		//	{
@@ -343,19 +334,19 @@ public class CacheSim {
 
 		// Now do B = A*2
 		for (int i=0;i<size;i++)
-		{	
+		{
 			for (int j=0;j<size;j++)
 			{
 				B[ j ][ i ] = A[ j ][ i ]*2;
 
 				// Forward the access to the cache.
 				requests++;
-				if (sendCacheRequest(cache, "A", j, i, size)) 
+				if (sendCacheRequest(cache, "A", j, i, size))
 				{
 					hits++;
 				}
 				requests++;
-				if (sendCacheRequest(cache, "B", j, i, size)) 
+				if (sendCacheRequest(cache, "B", j, i, size))
 				{
 					hits++;
 				}
@@ -367,11 +358,11 @@ public class CacheSim {
 		//System.out.println("////////////////////////////////////////////////////////////////////////////////");
 		//System.out.println("/////////////////////////////// Output Matrix //////////////////////////////////");
 		//System.out.println("////////////////////////////////////////////////////////////////////////////////");
-		// B 
+		// B
 		//System.out.println("A=\t");
 
 		//for (int i=0;i<size;i++)
-		//{	
+		//{
 		//	System.out.println("\t");
 		//	for (int j=0;j<size;j++)
 		//	{
@@ -384,7 +375,7 @@ public class CacheSim {
 
 		// Force a cache dump (optional)
 		//cache.request(-1);
-		
+
 		// Report the results of the simulation.
 		System.out.println("////////////////////////////////////////////////////////////////////////////////");
 		System.out.println("//////////////////////////////// Statistics ////////////////////////////////////");
@@ -414,7 +405,7 @@ public class CacheSim {
 
 		// Initialize matrix
 		for (int i=0;i<size;i++)
-		{	
+		{
 			for (int j=0;j<size;j++)
 			{
 				A[ i ][ j ] = i;
@@ -422,7 +413,7 @@ public class CacheSim {
 				C[ i ][ j ] = 0;
 			}
 		}
-	
+
 		// Print matrix (for verification)
 		//System.out.println("////////////////////////////////////////////////////////////////////////////////");
 		//System.out.println("/////////////////////////////// Input Matrix ///////////////////////////////////");
@@ -454,7 +445,7 @@ public class CacheSim {
 
 		// Now do A*B=C
 		for (int i=0;i<size;i++)
-		{	
+		{
 			for (int j=0;j<size;j++)
 			{
 				for (int k=0;k<size;k++)
@@ -463,28 +454,28 @@ public class CacheSim {
 
 					// Read C[k][i]
 					requests++;
-					if (sendCacheRequest(cache, "Cread", i, j, size)) 
+					if (sendCacheRequest(cache, "Cread", i, j, size))
 					{
 						hits++;
 					}
-					
+
 					// Read A[j][i]
 					requests++;
-					if (sendCacheRequest(cache, "A", i, k, size)) 
+					if (sendCacheRequest(cache, "A", i, k, size))
 					{
 						hits++;
 					}
-					
+
 					// Read B[k][j]
 					requests++;
-					if (sendCacheRequest(cache, "B", k, i, size)) 
+					if (sendCacheRequest(cache, "B", k, i, size))
 					{
 						hits++;
 					}
-					
+
 					// Write C[k][i]
 					requests++;
-					if (sendCacheRequest(cache, "Cwrite", i, j, size)) 
+					if (sendCacheRequest(cache, "Cwrite", i, j, size))
 					{
 						hits++;
 					}
@@ -512,7 +503,7 @@ public class CacheSim {
 
 		// Force a cache dump (optional)
 		//cache.request(-1);
-		
+
 		// Report the results of the simulation.
 		System.out.println("////////////////////////////////////////////////////////////////////////////////");
 		System.out.println("//////////////////////////////// Statistics ////////////////////////////////////");
@@ -553,7 +544,7 @@ public class CacheSim {
 
 		// Initialize matrix
 		for (int i=0;i<size;i++)
-		{	
+		{
 			for (int j=0;j<size;j++)
 			{
 				A[ i ][ j ] = i;
@@ -561,7 +552,7 @@ public class CacheSim {
 				C[ i ][ j ] = 0;
 			}
 		}
-	
+
 		// Print matrix (for verification)
 		//System.out.println("////////////////////////////////////////////////////////////////////////////////");
 		//System.out.println("/////////////////////////////// Input Matrix ///////////////////////////////////");
@@ -593,7 +584,7 @@ public class CacheSim {
 
 		// Now do A*B=C
 		for (int i0=0;i0<size;i0+=tilesize)
-		{	
+		{
 			for (int j0=0;j0<size;j0+=tilesize)
 			{
 				for (int k0=0;k0<size;k0+=tilesize)
@@ -608,28 +599,28 @@ public class CacheSim {
 
 								// Read C[i][j]
 								requests++;
-								if (sendCacheRequest(cache, "Cread", i, j, size)) 
+								if (sendCacheRequest(cache, "Cread", i, j, size))
 								{
 									hits++;
 								}
 
 								// Read A[j][k]
 								requests++;
-								if (sendCacheRequest(cache, "A", i, k, size)) 
+								if (sendCacheRequest(cache, "A", i, k, size))
 								{
 									hits++;
 								}
 
 								// Read B[k][j]
 								requests++;
-								if (sendCacheRequest(cache, "B", k, j, size)) 
+								if (sendCacheRequest(cache, "B", k, j, size))
 								{
 									hits++;
 								}
 
 								// Write C[i][j]
 								requests++;
-								if (sendCacheRequest(cache, "Cwrite", i, j, size)) 
+								if (sendCacheRequest(cache, "Cwrite", i, j, size))
 								{
 									hits++;
 								}
@@ -659,7 +650,7 @@ public class CacheSim {
 
 		// Force a cache dump (optional)
 		//cache.request(-1);
-		
+
 		// Report the results of the simulation.
 		System.out.println("////////////////////////////////////////////////////////////////////////////////");
 		System.out.println("//////////////////////////////// Statistics ////////////////////////////////////");
