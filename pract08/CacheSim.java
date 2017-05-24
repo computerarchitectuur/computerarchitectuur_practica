@@ -11,16 +11,7 @@ import org.apache.commons.cli.*;
 public class CacheSim {
 
   public static boolean isPowerOf2(int n) {
-    if (n == 1) {
-      return true;
-    }
-
-    if (n % 2 != 0) {
-      return false;
-    }
-    else {
-      return isPowerOf2(n / 2);
-    }
+    return n != 0 && (n & (n-1)) == 0;
   }
 
   private static class OptionError extends Exception {
