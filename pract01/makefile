@@ -1,9 +1,9 @@
 pract01: getemacs
-	gcc -O0 -S -m32 padovan.c
-	gcc -O0 -m32 padovan.c -g -o padovan
+	gcc -O0 -S -m32 binomial.c
+	gcc -O0 -m32 binomial.c -g -o binomial
 
 clean:
-	rm -rf padovan.s padovan
+	rm -rf binomial.s binomial
 
 getemacs:
 	cp .emacs ../..
