@@ -2,13 +2,18 @@
 #include <stdlib.h>
 
 int binomial(int n, int k) {
-    if (k == 0) {
-        return 1;
-    }
+    int result = 0;
+    
     if (n == k) {
-        return 1;
+        result = 1;
+    } else if (k == 0) {
+        result = 1;
+    } else {
+        result = binomial(n-1, k);
+        result += binomial(n-1, k-1);
     }
-    return binomial(n-1, k) + binomial(n-1, k-1);
+
+    return result;
 }
 
 int main(int argc, char *argv[]) {
