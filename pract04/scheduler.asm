@@ -441,15 +441,11 @@ main:
 	call	creeertaak
 	add	esp, 12	
 
-	;; installeer PrintInfoTaak
-	push	1000
-	push	infostapel
-	push	PrintInfoTaak
-	call	creeertaak
-	add	esp, 12	
+	;; De hoofd-taak gaat gewoon PrintInfoTaak direct uitvoeren
+	jmp PrintInfoTaak
 
 
-; Verwijder deze lus (Opgave 3)
+; Verwijder deze lus (Opgave 6)
 ; .............
 HoofdProgrammaGedaan:
         jmp     HoofdProgrammaGedaan
@@ -457,8 +453,6 @@ HoofdProgrammaGedaan:
 
 ;================================= TAKEN ==============================
 Taak1:
-        ; Vraag 1: roep hier print_huidige_taak_offset op met de juiste parameters
-        ; ...
         mov     eax, 0
         mov     ebx, 39
         mov     ecx, 1
@@ -468,8 +462,6 @@ Taak1:
 
 
 Taak2:
-    ; Vraag 1: roep hier print_huidige_taak_offset op met de juiste parameters
-    ; ...
 	mov	eax,40	
 	mov	ebx,79
 	mov	ecx,1
@@ -478,8 +470,6 @@ Taak2:
 
 
 Taak3:
-        ; Vraag 1: roep hier print_huidige_taak_offset op met de juiste parameters
-        ; ...
         mov     eax, 0
         mov     ebx, 79
         mov     ecx, 11
@@ -688,23 +678,12 @@ creeertaak:
 	ret
 
 
-creeer_idle_taak: ; Vraag 6
+creeer_idle_taak: ; Vraag 3
 ; ....................
 	ret
 
-huidige_taak_offset: ; Vraag 1
-; Geeft de _offset_ (in bytes) in de takenlijst terug die overeenkomt met de huidige taak
-; ....................
-	ret
 
-print_huidige_taak_offset: ; Vraag 1
-; heeft als argumenten (kolom, rij), en print op die locatie af:
-; "Hier draait taak: " + het resultaat van huidige_taak_offset (gebruik hiervoor printstring en printint)
-; .....
-	ret
-
-
-termineertaak: ; Vraag 2, Vraag 3
+termineertaak: ; Vraag 4, Vraag 5
 ; Krijgt de offset in bytes in de takenlijst
 ; van de taak die getermineerd moet worden.
 ; termineertaak gooit de taak die deze routine oproept uit de takenlijst
@@ -713,18 +692,11 @@ termineertaak: ; Vraag 2, Vraag 3
 
 ; ....................
 
-termineertaak_delayed: ; Vraag 4
-; Krijgt de offset in bytes in de takenlijst
-; van de taak die getermineerd moet worden. Het tweede argument is
-; de delay waarna deze taak getermineerd moet worden.
-; Het delayed termineren zelf moet gebeuren in de schedulerhandler.
-
-; ....................
-
 
 ; sleep(nr_ticks): Slaapt voor (minstens) nr_ticks ticks
 sleep:
-        mov eax, [esp+4]
+        push eax
+        mov eax, [esp+8]
         pushad ; Do not clobber any registers
         pushfd
         push    cs
@@ -743,12 +715,12 @@ sleep:
         jmp     schedulerhandler.taakzoeklus
 awake:
         popad
+        pop eax
         ret
 
-; Zorg ervoor dat taken delayed getermineerd kunnen worden (Vraag 4)
-; Zorg ervoor dat GEEN TAAK geprint wordt als er geen taak gevonden wordt (Vraag 5)
+; Zorg ervoor dat GEEN TAAK geprint wordt als er geen taak gevonden wordt (Vraag 2)
 ; en zorg er voor dat de idle taak gescheduled kan worden indien er anders geen taken
-; beschikbaar zijn (Vraag 6)
+; beschikbaar zijn (Vraag 3)
 ; ..............
 schedulerhandler:
         pushad
@@ -762,7 +734,6 @@ schedulerhandler:
         mov    ecx, [Huidige_Tick]
 	call	animatiestap
         cli
-        mov     esp, 0
 .taakzoeklus:
         add	ebx, 8
         cmp	ebx, takenlijst + (MAX_TAKEN * 8)
@@ -961,10 +932,7 @@ hex:	mov     [ebp-12+ecx],dl
 ;
 
 ShortDelay:
-        ; ..... (Opgave 5)
-        ; OPGELET! Deze functie wordt opgeroepen op plaatsen
-        ; die NIET uitgaan van de calling conventies! Zorg er hier
-        ; dus voor dat alle registers bewaard en hersteld worden!
+        ; ..... (Opgave 1)
 	ret
 
 ; --------------------
@@ -1047,8 +1015,6 @@ spiraal:
         shl     edx,16
 	mov	si,' '
 herstart:
-; Controleer hier of je taak mag stoppen na X ticks (Vraag 4)
-; ..........
 	cmp	si,' '
 	je	letters
 	mov	si,' '
