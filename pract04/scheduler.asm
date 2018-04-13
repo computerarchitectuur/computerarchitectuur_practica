@@ -614,6 +614,9 @@ PrintInfoTaakLoop:
   cmp   ecx, MAX_TAKEN
   jl    .printTaken
 
+  ; Vraag 1
+  ; .......
+
   jmp   PrintInfoTaakLoop
 
 
@@ -711,7 +714,6 @@ sleep:
         add     eax, ecx
         mov     dword [ebx + 4], eax
         mov     edx, 0
-        mov     esp, 0
         jmp     schedulerhandler.taakzoeklus
 awake:
         popad
