@@ -427,6 +427,11 @@ main:
 
 ; Start de taken
 ; .............
+
+    ; Vraag 3
+    ; ..............
+
+
 	;; installeer taak1
 	push	0
 	push	stapel1
@@ -441,12 +446,14 @@ main:
 	call	creeertaak
 	add	esp, 12	
 
+    ; Vraag 4
+    ; ..............
+
+
 	;; De hoofd-taak gaat gewoon PrintInfoTaak direct uitvoeren
 	jmp PrintInfoTaak
 
 
-; Verwijder deze lus (Opgave 6)
-; .............
 HoofdProgrammaGedaan:
         jmp     HoofdProgrammaGedaan
 
@@ -682,6 +689,7 @@ creeertaak:
 
 
 creeer_idle_taak: ; Vraag 3
+; creeer_idle_taak()
 ; ....................
 	ret
 
@@ -689,8 +697,8 @@ creeer_idle_taak: ; Vraag 3
 termineertaak: ; Vraag 4, Vraag 5
 ; Krijgt de offset in bytes in de takenlijst
 ; van de taak die getermineerd moet worden.
-; termineertaak gooit de taak die deze routine oproept uit de takenlijst
-; en zet de uitvoering verder met een andere taak uit de takenlijst
+; termineertaak gooit de taak die deze routine oproept uit de takenlijst (vragen 4 en 5)
+; en zet de uitvoering, indien nodig, verder met een andere taak uit de takenlijst (voor vraag 5)
 ; termineertaak(taakslotnummer)
 
 ; ....................
