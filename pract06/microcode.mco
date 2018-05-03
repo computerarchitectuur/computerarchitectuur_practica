@@ -39,7 +39,7 @@ DBRNE    |             |
 SUB      |Sub          |             
 BRLE     |             |             
 MAX      |             |             
-HALT     |             |             
+HALT     |Halt         |             
 BRNE     |Brne         |             
 VECTORMAX4|             |             
 
