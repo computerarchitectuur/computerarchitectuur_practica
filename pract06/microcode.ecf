@@ -24,10 +24,10 @@ FMA      | R  |r1,r2,r3
 DBRNE    | I  |r1,r2,j
 SUB      | R  |r1,r2,r3
 BRLE     | I  |r1,j
-MEMCMP   | R  |r1,r2,r3
+MAX      | R  |r1,r2,r3
 HALT     | J  |
 BRNE     | I  |r1,j
-INPRODUCT| R  |r1,r2,r3
+VECTORMAX4| R  |r1,r2,r3
 
 [Microprogrammed Architecture]
 MicroCodeSize=256
