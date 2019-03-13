@@ -4,8 +4,10 @@
 int jacobsthal(int n) {
   int result = 0;
 
-  if (n < 2)
-    result = n;
+  if (n == 0)
+    result = 1;
+  else if (n == 1)
+    result = 1;
   else
   {
     int n_minus_two = jacobsthal(n-2);
