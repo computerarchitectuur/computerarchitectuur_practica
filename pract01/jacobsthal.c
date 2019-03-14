@@ -20,7 +20,7 @@ int jacobsthal(int n) {
 }
 int main(int argc, char *argv[]) {
     int i, n, k, b, aantal = 1;
-    if (argc==2 | argc==3) {
+    if (argc==2 || argc==3) {
         n = atoi(argv[1]);
         if (argc == 3) aantal = atoi(argv[2]);
         for (i=0; i<aantal; i++){
