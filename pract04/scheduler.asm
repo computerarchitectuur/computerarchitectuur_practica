@@ -945,7 +945,7 @@ hex:	mov     [ebp-12+ecx],dl
 ;
 
 ShortDelay:
-        ; ..... (Opgave 1)
+        ; ..... (Vraag 1)
 	ret
 
 ; --------------------
