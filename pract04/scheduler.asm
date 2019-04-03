@@ -428,7 +428,9 @@ main:
 ; Start de taken
 ; .............
 
-    ; Vraag 3
+    ; Vraag 3 en 4
+
+    ; Vraag 2
     ; ..............
 
 
@@ -629,6 +631,7 @@ PrintInfoTaakLoop:
 
 IdleTaak:
         ; Schrijf naar het scherm dat de idle taak gebruikt wordt (niet van toepassing in dit practicum)
+        ; Vraag 4
         jmp     IdleTaak
 
 
@@ -688,13 +691,13 @@ creeertaak:
 	ret
 
 
-creeer_idle_taak: ; Vraag 3
+; creeer_idle_taak: ; Niet nodig in 2018-2019
 ; creeer_idle_taak()
 ; ....................
-	ret
+; 	ret
 
 
-termineertaak: ; Vraag 4, Vraag 5
+termineertaak: ; Vraag 5, Vraag 6
 ; Krijgt de offset in bytes in de takenlijst
 ; van de taak die getermineerd moet worden.
 ; termineertaak gooit de taak die deze routine oproept uit de takenlijst (vragen 4 en 5)
