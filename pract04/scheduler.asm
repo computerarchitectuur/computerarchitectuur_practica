@@ -630,7 +630,7 @@ PrintInfoTaakLoop:
 
 
 IdleTaak:
-        ; Schrijf naar het scherm dat de idle taak gebruikt wordt (niet van toepassing in dit practicum)
+        ; Schrijf naar het scherm dat de idle taak gebruikt wordt
         ; Vraag 4
         jmp     IdleTaak
 
