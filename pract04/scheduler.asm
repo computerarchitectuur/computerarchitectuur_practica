@@ -733,7 +733,7 @@ awake:
 
 ; Implementeer deze functie (Vraag 3)
 ; ..............
-verander_huidige_taak:
+verander_huidige_prioriteit:
 
 
 ; Hou rekening met de prioriteiten (Vraag 2)
