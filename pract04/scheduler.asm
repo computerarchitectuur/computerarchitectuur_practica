@@ -308,7 +308,7 @@ STAPELGROOTTE equ 500
 ; bevat deze lijst informatie over wanneer in de tijd een taak mag uitgevoerd worden
 
 takenlijst times 2*MAX_TAKEN dd (0)
-idle_taak_slot  times 2 dd (0)
+; idle_taak_slot  times 2 dd (0) ; Niet nodig in 2019
 
 
 ; Hier worden enkele stapels gedefinieerd van elk STAPELGROOTTE grootte (bytes!).
@@ -731,9 +731,12 @@ awake:
         pop eax
         ret
 
-; Zorg ervoor dat GEEN TAAK geprint wordt als er geen taak gevonden wordt (Vraag 2)
-; en zorg er voor dat de idle taak gescheduled kan worden indien er anders geen taken
-; beschikbaar zijn (Vraag 3)
+; Implementeer deze functie (Vraag 3)
+; ..............
+verander_huidige_taak:
+
+
+; Hou rekening met de prioriteiten (Vraag 2)
 ; ..............
 schedulerhandler:
         pushad
