@@ -19,10 +19,10 @@
 0010 |Sub   |SUB   |A     |B     |C     |      |      |True  |Wb    |      |      |      |      
 0011 |Brne  |S1    |A     |      |      |      |      |EQ    |Fetch |      |      |      |      
 0012 |      |ADD   |PC    |IR    |PC    |Word  |      |True  |Fetch |      |      |      |      
-0013 |Max   |      |      |      |      |      |      |      |      |      |      |      |      
-0014 |Dbrne |      |      |      |      |      |      |      |      |      |      |      |      
+0013 |Comp  |      |      |      |      |      |      |      |      |      |      |      |      
+0014 |Dbrnz |      |      |      |      |      |      |      |      |      |      |      |      
 0015 |Brle  |      |      |      |      |      |      |      |      |      |      |      |      
-0016 |VectorMax4|      |      |      |      |      |      |      |      |      |      |      |      
+0016 |VectorComp|      |      |      |      |      |      |      |      |      |      |      |      
 
 [Jump Tables]
 ;Opcode  |Jump Table 1 |Jump Table 2 
@@ -34,12 +34,11 @@ ADDI     |Addi         |
 BRGE     |Brge         |             
 JUMP     |Jump         |             
 MULT     |Mult         |             
-FMA      |             |             
-DBRNE    |             |             
+COMP     |             |             
+DBRNZ    |             |             
 SUB      |Sub          |             
 BRLE     |             |             
-MAX      |             |             
 HALT     |Halt         |             
 BRNE     |Brne         |             
-VECTORMAX4|             |             
+VECTORCOMP|             |             
 
