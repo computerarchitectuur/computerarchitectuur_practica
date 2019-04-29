@@ -23,7 +23,7 @@ MULT     | R  |r1,r2,r3
 COMP     | I  |r1,r2,i
 DBRNZ    | I  |r1,j
 SUB      | R  |r1,r2,r3
-BRLE     | I  |r1,j
+SUBI     | I  |r1,i,r2
 HALT     | J  |
 BRNE     | I  |r1,j
 VECTORCOMP| I  |r1,r2,i

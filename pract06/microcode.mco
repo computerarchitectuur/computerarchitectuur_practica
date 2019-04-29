@@ -21,7 +21,7 @@
 0012 |      |ADD   |PC    |IR    |PC    |Word  |      |True  |Fetch |      |      |      |      
 0013 |Comp  |      |      |      |      |      |      |      |      |      |      |      |      
 0014 |Dbrnz |      |      |      |      |      |      |      |      |      |      |      |      
-0015 |Brle  |      |      |      |      |      |      |      |      |      |      |      |      
+0015 |Subi  |      |      |      |      |      |      |      |      |      |      |      |      
 0016 |VectorComp|      |      |      |      |      |      |      |      |      |      |      |      
 
 [Jump Tables]
@@ -37,7 +37,7 @@ MULT     |Mult         |
 COMP     |             |             
 DBRNZ    |             |             
 SUB      |Sub          |             
-BRLE     |             |             
+SUBI     |             |             
 HALT     |Halt         |             
 BRNE     |Brne         |             
 VECTORCOMP|             |             
