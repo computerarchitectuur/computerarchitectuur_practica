@@ -11,7 +11,7 @@ def decode_address_range(answer):
     return (start, end)
 
 def get_address_range(location):
-    answer = input(f'Geef het bereik van adressen aanwezig in {location}. Doe dit in de vorm BEGINADRES-EINDADRES (eindadres inclusief), of simpelweg als \'-\' als dit blok leeg is: ')
+    answer = input('Geef het bereik van adressen aanwezig in ' + location + '. Doe dit in de vorm BEGINADRES-EINDADRES (eindadres inclusief), of simpelweg als \'-\' als dit blok leeg is: ')
     return decode_address_range(answer)
 
 def ask_cache_contents_part1(iteration):
