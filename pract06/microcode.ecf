@@ -20,14 +20,14 @@ ADDI     | I  |r1,i,r2
 BRGE     | I  |r1,j
 JUMP     | I  |j
 MULT     | R  |r1,r2,r3
-FMA      | R  |r1,r2,r3
-DBRNE    | I  |r1,r2,j
-SUB      | R  |r1,r2,r3
+COMP     | I  |r1,r2,i
+DBRNZ    | I  |r1,j
 BRLE     | I  |r1,j
-MAX      | R  |r1,r2,r3
+SUB      | R  |r1,r2,r3
+SUBI     | I  |r1,i,r2
 HALT     | J  |
 BRNE     | I  |r1,j
-VECTORMAX4| R  |r1,r2,r3
+VECTORCOMP| I  |r1,r2,i
 
 [Microprogrammed Architecture]
 MicroCodeSize=256

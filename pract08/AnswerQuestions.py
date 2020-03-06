@@ -6,16 +6,19 @@ def decode_address_range(answer):
     assert '-' in answer, 'Geen koppelteken gebruikt bij het ingeven van het adresbereik!'
     tokens = answer.split('-')
     assert len(tokens) == 2, 'Te veel koppeltekens bij het ingeven van het adresbereik!'
-    start = int(tokens[0])
-    end = int(tokens[1])
+    start = int(tokens[0]) if tokens[0] else -1
+    end = int(tokens[1]) if tokens[1] else -1
     return (start, end)
+
+def get_address_range(location):
+    answer = input('Geef het bereik van adressen aanwezig in ' + location + '. Doe dit in de vorm BEGINADRES-EINDADRES (eindadres inclusief), of simpelweg als \'-\' als dit blok leeg is: ')
+    return decode_address_range(answer)
 
 def ask_cache_contents_part1(iteration):
     contents = []
     print('Geef de inhoud van de cache op iteratie: ' + str(iteration))
     for iii in range(0, 4):
-        answer = input('Geef het bereik van adressen aanwezig in blok ' + str(iii) + ' in de vorm BEGINADRES-EINDADRES (eindadres inclusief): ')
-        contents.append(decode_address_range(answer))
+        contents.append(get_address_range('blok ' + str(iii)))
 
     return contents
 
@@ -25,8 +28,7 @@ def ask_cache_contents_part2(iteration):
     for iii in range(0, 2):
         blocks = []
         for jjj in range(0, 4):
-            answer = input('Geef het bereik van adressen aanwezig in set ' + str(iii) + ' blok ' + str(jjj) + ' in de vorm BEGINADRES-EINDADRES (eindadres inclusief): ')
-            blocks.append(decode_address_range(answer))
+            blocks.append(get_address_range('set ' + str(iii) + ' blok ' + str(jjj)))
         contents.append(blocks)
 
     return contents
