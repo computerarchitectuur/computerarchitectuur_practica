@@ -1,9 +1,9 @@
 pract01: getemacs
-	gcc -O0 -S -m32 jacobsthal.c
-	gcc -O0 -m32 jacobsthal.c -g -o jacobsthal
+	gcc -O0 -S -m32 leonardo.c
+	gcc -O0 -m32 leonardo.c -g -o leonardo
 
 clean:
-	rm -rf jacobsthal.s jacobsthal
+	rm -rf leonardo.s leonardo
 
 getemacs:
 	cp .emacs ../..
