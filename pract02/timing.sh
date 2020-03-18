@@ -29,39 +29,38 @@ echo # Empty line
 
 correctnesscheck() {
    declare -A correctewaarden
-   correctewaarden[0]=1 
-   correctewaarden[1]=1 
-   correctewaarden[2]=3 
-   correctewaarden[3]=5 
-   correctewaarden[4]=11 
-   correctewaarden[5]=21 
-   correctewaarden[6]=43 
-   correctewaarden[7]=85 
-   correctewaarden[8]=171 
-   correctewaarden[9]=341 
-   correctewaarden[10]=683 
-   correctewaarden[11]=1365 
-   correctewaarden[12]=2731 
-   correctewaarden[13]=5461 
-   correctewaarden[14]=10923 
-   correctewaarden[15]=21845 
-   correctewaarden[16]=43691 
-   correctewaarden[17]=87381 
-   correctewaarden[18]=174763 
-   correctewaarden[19]=349525 
-   correctewaarden[20]=699051 
-   correctewaarden[21]=1398101 
-   correctewaarden[22]=2796203 
-   correctewaarden[23]=5592405 
-   correctewaarden[24]=11184811 
-   correctewaarden[25]=22369621 
-   correctewaarden[26]=44739243 
-   correctewaarden[27]=89478485 
-   correctewaarden[28]=178956971 
-   correctewaarden[29]=357913941 
-   correctewaarden[30]=715827883 
-   correctewaarden[31]=1431655765 
-
+   correctewaarden[0]=1
+   correctewaarden[1]=1
+   correctewaarden[2]=3
+   correctewaarden[3]=5
+   correctewaarden[4]=9
+   correctewaarden[5]=15
+   correctewaarden[6]=25
+   correctewaarden[7]=41
+   correctewaarden[8]=67
+   correctewaarden[9]=109
+   correctewaarden[10]=177
+   correctewaarden[11]=287
+   correctewaarden[12]=465
+   correctewaarden[13]=753
+   correctewaarden[14]=1219
+   correctewaarden[15]=1973
+   correctewaarden[16]=3193
+   correctewaarden[17]=5167
+   correctewaarden[18]=8361
+   correctewaarden[19]=13529
+   correctewaarden[20]=21891
+   correctewaarden[21]=35421
+   correctewaarden[22]=57313
+   correctewaarden[23]=92735
+   correctewaarden[24]=150049
+   correctewaarden[25]=242785
+   correctewaarden[26]=392835
+   correctewaarden[27]=635621
+   correctewaarden[28]=1028457
+   correctewaarden[29]=1664079
+   correctewaarden[30]=2692537
+   correctewaarden[31]=4356617
 
    result=`./${PROG} $1 1 | cut '-d=' -f3 | cut -'d ' -f2 `
    if [[ "$result" != ${correctewaarden[$1]} ]]
