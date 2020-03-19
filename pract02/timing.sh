@@ -10,7 +10,7 @@ fi
 
 n=$1
 iteraties=1000
-PROG=jacobsthal
+PROG=leonardo
 
 rm ./${PROG}
 make pract02
@@ -22,7 +22,7 @@ then
 fi
 
 $VALGRIND --tool=cachegrind --cachegrind-out-file=timing.out ./${PROG} $n $iteraties &> output
-cat output | grep jacobsthal
+cat output | grep leonardo
 cat output | grep "Gesimuleerde" # | awk '{print $4}'
 
 echo # Empty line
