@@ -2,7 +2,7 @@ ECHO=/bin/echo
 
 all:
 	@$(ECHO) "Gebruik een van de volgende targets: assembly, pract02, pract02_opt, clean"
-	@$(ECHO) "Let op! assembly OVERSCHRIJFT binomial.s!!!!!"
+	@$(ECHO) "Let op! assembly OVERSCHRIJFT leonardo.s!!!!!"
 
 assembly:
 	gcc -m32 -o leonardo.s -O0 -c -S leonardo.c
