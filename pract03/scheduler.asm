@@ -13,6 +13,9 @@
 ; deze sector wordt opgeslagen op adres 7c00h.
 ;
 
+; nasm option: generate a map file for symbols
+[map symbols MyBoot.map]
+
 ; constantendefinities
 
 Loaded		EQU	7C00h    ; adres waarop sector 0 geladen wordt
