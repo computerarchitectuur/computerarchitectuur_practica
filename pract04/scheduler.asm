@@ -13,6 +13,9 @@
 ; deze sector wordt opgeslagen op adres 7c00h.
 ;
 
+; nasm option: generate a map file for symbols
+[map symbols MyBoot.map]
+
 ; constantendefinities
 
 Loaded		EQU	7C00h    ; adres waarop sector 0 geladen wordt
@@ -308,7 +311,7 @@ STAPELGROOTTE equ 500
 ; bevat deze lijst informatie over wanneer in de tijd een taak mag uitgevoerd worden
 
 takenlijst times 2*MAX_TAKEN dd (0)
-; idle_taak_slot  times 2 dd (0) ; Niet nodig in 2019
+idle_taak_slot  times 2 dd (0) ; Nodig in vraag 3
 
 
 ; Hier worden enkele stapels gedefinieerd van elk STAPELGROOTTE grootte (bytes!).
@@ -318,7 +321,7 @@ stapel1    times STAPELGROOTTE db (0)
 stapel2    times STAPELGROOTTE db (0)
 mainstapel times STAPELGROOTTE db (0)
 infostapel times STAPELGROOTTE db (0)
-idlestapel times STAPELGROOTTE db (0)
+idlestapel times STAPELGROOTTE db (0) ; Nodig in vraag 3
 
 einde_stapels times 1 dd (0)
 
@@ -428,11 +431,8 @@ main:
 ; Start de taken
 ; .............
 
-    ; Vraag 3 en 4
-
-    ; Vraag 2
+    ; Vraag 3
     ; ..............
-
 
 	;; installeer taak1
 	push	0
@@ -447,9 +447,6 @@ main:
 	push	Taak2
 	call	creeertaak
 	add	esp, 12	
-
-    ; Vraag 4
-    ; ..............
 
 
 	;; De hoofd-taak gaat gewoon PrintInfoTaak direct uitvoeren
@@ -623,7 +620,7 @@ PrintInfoTaakLoop:
   cmp   ecx, MAX_TAKEN
   jl    .printTaken
 
-  ; Vraag 1
+  ; Vraag 1&4
   ; .......
 
   jmp   PrintInfoTaakLoop
@@ -631,7 +628,7 @@ PrintInfoTaakLoop:
 
 IdleTaak:
         ; Schrijf naar het scherm dat de idle taak gebruikt wordt
-        ; Vraag 4
+        ; Wordt gebruikt in vraag 3/4 (maar moet niet aangepast worden)
         jmp     IdleTaak
 
 
@@ -691,13 +688,13 @@ creeertaak:
 	ret
 
 
-; creeer_idle_taak: ; Niet nodig in 2018-2019
+creeer_idle_taak: ; Vraag 3
 ; creeer_idle_taak()
 ; ....................
-; 	ret
+ 	ret
 
 
-termineertaak: ; Vraag 5, Vraag 6
+termineertaak: ; Optioneel in 2020
 ; Krijgt de offset in bytes in de takenlijst
 ; van de taak die getermineerd moet worden.
 ; termineertaak gooit de taak die deze routine oproept uit de takenlijst (vragen 4 en 5)
@@ -731,12 +728,12 @@ awake:
         pop eax
         ret
 
-; Implementeer deze functie (Vraag 3)
+; Niet nodig in 2020
 ; ..............
 verander_huidige_prioriteit:
 
 
-; Hou rekening met de prioriteiten (Vraag 2)
+; Aanpassen in vraag 2 & 4
 ; ..............
 schedulerhandler:
         pushad
