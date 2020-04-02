@@ -721,7 +721,6 @@ sleep:
         mov     dword ecx, [Huidige_Tick]
         add     eax, ecx
         mov     dword [ebx + 4], eax
-        mov     edx, 0
         jmp     schedulerhandler.taakzoeklus
 awake:
         popad
