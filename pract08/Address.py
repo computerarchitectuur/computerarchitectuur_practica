@@ -17,7 +17,7 @@ def assign_object_sizes(group_id, object_sizes):
         # If there is a group ID, add an offset
         if group_id:
             # Generate the offset, then align it
-            offset = hash((2019, group_id)) % 1024
+            offset = hash((2020, group_id)) % 1024
             offset = align(offset, 128)
             address += offset
 
