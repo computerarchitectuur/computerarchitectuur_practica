@@ -45,7 +45,7 @@ if __name__ == '__main__':
     results['answers'] = answers
 
     # Gather general group information
-    results['group_id'] = int(input("Geef uw groepsnummer in: "))
+    results['group_id'] = int(input("Geef de laatste 4 cijfers van je studentennummer in: "))
 
     # Get the answers for the actual questions
     ask_question(answers, 'Dubbele lus 1a', ask_cache_contents_part1, 10)
