@@ -5,15 +5,15 @@ int leonardo(int n) {
   int result = 0;
 
   if (n == 0)
-    result = 1;
+    result = 2;
   else if (n == 1)
-    result = 1;
+    result = 2;
   else
   {
     int n_minus_two = leonardo(n-2);
     int n_minus_one = leonardo(n-1);
 
-    result =  n_minus_two + n_minus_one + 1;
+    result =  n_minus_two + n_minus_one + 2;
   }
 
   return result;
