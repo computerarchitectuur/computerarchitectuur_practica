@@ -298,40 +298,40 @@ IDTLimit 	dw	IDTEnd-IDTStart-1 ; limit = offset hoogste byte
 IDTBase 	dd      IDTStart
 
 ;------------------------------------------------------------------------------
-; Data voor de takenlijst
+; Data voor de tasklist
 ;------------------------------------------------------------------------------
 
 MAX_TAKEN equ 5
 
-STAPELGROOTTE equ 500
+STACKSIZE equ 500
 
 ; Takenlijst is een lijst van MAX_TAKEN groot. Deze lijst bevat de top van 
 ; de stapel van de taak wanneer de taak niet aan het uitvoeren is. Indien 
 ; het element 0 is, wijst dit op de afwezigheid van een taak. Bovendien
 ; bevat deze lijst informatie over wanneer in de tijd een taak mag uitgevoerd worden
 
-takenlijst times 2*MAX_TAKEN dd (0)
-idle_taak_slot  times 2 dd (0)
+tasklist times 2*MAX_TAKEN dd (0)
+idle_task_slot  times 2 dd (0)
 
 
-; Hier worden enkele stapels gedefinieerd van elk STAPELGROOTTE grootte (bytes!).
+; Hier worden enkele stapels gedefinieerd van elk STACKSIZE grootte (bytes!).
 begin_stapels times 1 dd (0)
 
-stapel1    times STAPELGROOTTE db (0)
-stapel2    times STAPELGROOTTE db (0)
-mainstapel times STAPELGROOTTE db (0)
-infostapel times STAPELGROOTTE db (0)
-idlestapel times STAPELGROOTTE db (0)
+stapel1    times STACKSIZE db (0)
+stapel2    times STACKSIZE db (0)
+mainstapel times STACKSIZE db (0)
+infostapel times STACKSIZE db (0)
+idlestapel times STACKSIZE db (0)
 
 einde_stapels times 1 dd (0)
 
 ; variabele die bijhoudt welke taak op elk ogenblik aan het uitvoeren is.
-; De veranderlijk bevat het adres van het corresponderende element in takenlijst.
+; De veranderlijk bevat het adres van het corresponderende element in tasklist.
 
-Huidige_Taak dd 0
+Current_Task dd 0
 
 ; variabele die kijkt hoeveel timer interrupts we al gehad hebben
-Huidige_Tick dd 0
+Current_Tick dd 0
 
 
 ;================================= MAIN ==============================
@@ -409,9 +409,9 @@ main:
 
 
         ; We gaan over naar een voorgedefinieerde stapel en stoppen het hoofdprogramma in de lijst
-        lea     esp, [mainstapel + STAPELGROOTTE]
-        mov     dword [takenlijst], esp
-        mov     dword [Huidige_Taak], takenlijst
+        lea     esp, [mainstapel + STACKSIZE]
+        mov     dword [tasklist], esp
+        mov     dword [Current_Task], tasklist
 
 	; installeer de schedulerhandler op de timeronderbreking en zet deze onderbreking aan (Opgave 3 en 4)
 
@@ -433,7 +433,7 @@ HoofdProgrammaGedaan:
 
 
 ;================================= TAKEN ==============================
-Taak1:
+Task1:
         mov     eax, 0
         mov     ebx, 39
         mov     ecx, 0
@@ -442,7 +442,7 @@ Taak1:
 
 
 
-Taak2:
+Task2:
 	mov	eax,40	
 	mov	ebx,79
 	mov	ecx,0
@@ -450,7 +450,7 @@ Taak2:
 	jmp	spiraal
 
 
-Taak3:
+Task3:
         mov     eax, 0
         mov     ebx, 79
         mov     ecx, 10
@@ -526,7 +526,7 @@ PrintInfoTaakLoop:
   ; Print Tijd-Info
   push  21
   push  13
-  push  dword [Huidige_Tick]
+  push  dword [Current_Tick]
   call  printhex
   add   esp, 12
 
@@ -543,7 +543,7 @@ PrintInfoTaakLoop:
   add   esp, 12
 
   ; Print taken-info:
-  lea   esi, [takenlijst]
+  lea   esi, [tasklist]
   mov   ecx, 0
 .printTaken:
   mov   dword ebx, [esi+8*ecx]
@@ -604,7 +604,7 @@ IdleTaak:
 ;================================= SCHEDULING ==============================
 
 creeertaak: ; Opgave 5
-; voeg een taak toe aan de takenlijst
+; voeg een taak toe aan de tasklist
 ; oproepen als creeertaak(adres, stapel, wachttijd)
 ; ....................
 
@@ -615,8 +615,8 @@ creeer_idle_taak: ; Labo 4
 
 termineertaak: ; Labo 4
 ;
-; gooit de taak die deze routine oproept uit de takenlijst
-; en zet de uitvoering verder met een andere taak uit de takenlijst
+; gooit de taak die deze routine oproept uit de tasklist
+; en zet de uitvoering verder met een andere taak uit de tasklist
 
 ; ....................
 
@@ -628,15 +628,15 @@ sleep:
         pushad
         lea     ebx, [awake]
         mov     [esp+4*8], ebx
-        mov     ebx, [Huidige_Taak]
+        mov     ebx, [Current_Task]
         mov     dword [ebx],esp
-        mov     dword ecx, [Huidige_Tick]
+        mov     dword ecx, [Current_Tick]
         add     eax, ecx
         mov     dword [ebx + 4], eax
         mov     edx, 0
         cli
         mov     esp, 0
-        jmp     schedulerhandler.taakzoeklus
+        jmp     schedulerhandler.tasksearchloop
 awake:
         ret
 
@@ -644,28 +644,28 @@ awake:
 ; ..............
 schedulerhandler:
         pushad
-        inc     dword [Huidige_Tick]
+        inc     dword [Current_Tick]
         mov	al, 0x20
         out	0x20, al
         sti
-        mov	ebx, [Huidige_Taak]
+        mov	ebx, [Current_Task]
         mov	dword [ebx],esp
         mov     dword [ebx + 4], 0
-        mov    ecx, [Huidige_Tick]
-	call	animatiestap
+        mov    ecx, [Current_Tick]
+	call	animationstep
         cli
         mov     esp, 0
-.taakzoeklus:
+.tasksearchloop:
         add	ebx, 8
-        cmp	ebx, takenlijst + (MAX_TAKEN * 8)
-        jl	.nog_niet_aan_het_einde
-        lea	ebx, [takenlijst]
-.nog_niet_aan_het_einde:
+        cmp	ebx, tasklist + (MAX_TAKEN * 8)
+        jl	.not_yet_at_the_end
+        lea	ebx, [tasklist]
+.not_yet_at_the_end:
         cmp	dword [ebx],0
-        je	.taakzoeklus
+        je	.tasksearchloop
         cmp     dword [ebx+4], ecx
-        jg      .taakzoeklus
-        mov     [Huidige_Taak], ebx
+        jg      .tasksearchloop
+        mov     [Current_Task], ebx
         mov     esp, [ebx]
         popad
         iret
@@ -677,7 +677,7 @@ ANIM_Y EQU 20
 ANIMATIE_FRAME db "/", 0
 CHECK_FAIL db "Check FAIL: ", 0
 
-animatiestap:
+animationstep:
 pushad
 cmp	byte [ANIMATIE_FRAME], '/'
 je	animatie_1
