@@ -298,40 +298,40 @@ IDTLimit 	dw	IDTEnd-IDTStart-1 ; limit = offset hoogste byte
 IDTBase 	dd      IDTStart
 
 ;------------------------------------------------------------------------------
-; Data voor de takenlijst
+; Data voor de tasklist
 ;------------------------------------------------------------------------------
 
 MAX_TAKEN equ 5
 
-STAPELGROOTTE equ 500
+STACKSIZE equ 500
 
 ; Takenlijst is een lijst van MAX_TAKEN groot. Deze lijst bevat de top van 
 ; de stapel van de taak wanneer de taak niet aan het uitvoeren is. Indien 
 ; het element 0 is, wijst dit op de afwezigheid van een taak. Bovendien
 ; bevat deze lijst informatie over wanneer in de tijd een taak mag uitgevoerd worden
 
-takenlijst times 2*MAX_TAKEN dd (0)
-idle_taak_slot  times 2 dd (0) ; Nodig in vraag 3
+tasklist times 2*MAX_TAKEN dd (0)
+idle_task_slot  times 2 dd (0) ; Nodig in vraag 3
 
 
-; Hier worden enkele stapels gedefinieerd van elk STAPELGROOTTE grootte (bytes!).
+; Hier worden enkele stapels gedefinieerd van elk STACKSIZE grootte (bytes!).
 begin_stapels times 1 dd (0)
 
-stapel1    times STAPELGROOTTE db (0)
-stapel2    times STAPELGROOTTE db (0)
-mainstapel times STAPELGROOTTE db (0)
-infostapel times STAPELGROOTTE db (0)
-idlestapel times STAPELGROOTTE db (0) ; Nodig in vraag 3
+stapel1    times STACKSIZE db (0)
+stapel2    times STACKSIZE db (0)
+mainstapel times STACKSIZE db (0)
+infostapel times STACKSIZE db (0)
+idlestapel times STACKSIZE db (0) ; Nodig in vraag 3
 
 einde_stapels times 1 dd (0)
 
 ; variabele die bijhoudt welke taak op elk ogenblik aan het uitvoeren is.
-; De veranderlijk bevat het adres van het corresponderende element in takenlijst.
+; De veranderlijk bevat het adres van het corresponderende element in tasklist.
 
-Huidige_Taak dd 0
+Current_Task dd 0
 
 ; variabele die kijkt hoeveel timer interrupts we al gehad hebben
-Huidige_Tick dd 0
+Current_Tick dd 0
 
 
 ;================================= MAIN ==============================
@@ -409,9 +409,9 @@ main:
 
 
         ; We gaan over naar een voorgedefinieerde stapel en stoppen het hoofdprogramma in de lijst
-        lea     esp, [mainstapel + STAPELGROOTTE]
-        mov     dword [takenlijst], esp
-        mov     dword [Huidige_Taak], takenlijst
+        lea     esp, [mainstapel + STACKSIZE]
+        mov     dword [tasklist], esp
+        mov     dword [Current_Task], tasklist
 
 	; installeer de schedulerhandler op de timeronderbreking en zet deze onderbreking aan
 	push	schedulerhandler
@@ -437,20 +437,20 @@ main:
 	;; installeer taak1
 	push	0
 	push	stapel1
-	push	Taak1
-	call	creeertaak
+	push	Task1
+	call	createtask
 	add	esp, 12	
 
 	;; installeer taak2
 	push	2500
 	push	stapel2
-	push	Taak2
-	call	creeertaak
+	push	Task2
+	call	createtask
 	add	esp, 12	
 
 
-	;; De hoofd-taak gaat gewoon PrintInfoTaak direct uitvoeren
-	jmp PrintInfoTaak
+	;; De hoofd-taak gaat gewoon PrintInfoTask direct uitvoeren
+	jmp PrintInfoTask
 
 
 HoofdProgrammaGedaan:
@@ -458,7 +458,7 @@ HoofdProgrammaGedaan:
 
 
 ;================================= TAKEN ==============================
-Taak1:
+Task1:
         mov     eax, 0
         mov     ebx, 39
         mov     ecx, 1
@@ -467,7 +467,7 @@ Taak1:
 
 
 
-Taak2:
+Task2:
 	mov	eax,40	
 	mov	ebx,79
 	mov	ecx,1
@@ -487,7 +487,7 @@ clockstring  db "Clockticks:", 0
 tscstring    db "TSC: ", 0
 takenstring  db "Taken: ", 0
 
-PrintInfoTaak:
+PrintInfoTask:
   ; Print informatie op het scherm
   push  21
   push  0
@@ -545,13 +545,13 @@ PrintInfoTaak:
 
   cmp   edi, MAX_TAKEN
   jl    .printLabels
-  jmp   PrintInfoTaakLoop
+  jmp   PrintInfoTaskLoop
 
-PrintInfoTaakLoop:
+PrintInfoTaskLoop:
   ; Print Tijd-Info
   push  21
   push  13
-  push  dword [Huidige_Tick]
+  push  dword [Current_Tick]
   call  printhex
   add   esp, 12
 
@@ -568,7 +568,7 @@ PrintInfoTaakLoop:
   add   esp, 12
 
   ; Print taken-info:
-  lea   esi, [takenlijst]
+  lea   esi, [tasklist]
   mov   ecx, 0
 .printTaken:
   imul  edx, ecx, 8
@@ -623,20 +623,20 @@ PrintInfoTaakLoop:
   ; Vraag 1&4
   ; .......
 
-  jmp   PrintInfoTaakLoop
+  jmp   PrintInfoTaskLoop
 
 
-IdleTaak:
+IdleTask:
         ; Schrijf naar het scherm dat de idle taak gebruikt wordt
         ; Wordt gebruikt in vraag 3/4 (maar moet niet aangepast worden)
-        jmp     IdleTaak
+        jmp     IdleTask
 
 
 ;================================= SCHEDULING ==============================
 
-creeertaak:
-; voeg een taak toe aan de takenlijst
-; oproepen als creeertaak(adres, stapel, wachttijd)
+createtask:
+; voeg een taak toe aan de tasklist
+; oproepen als createtask(adres, stapel, wachttijd)
 ; ....................
 		mov	eax, [esp+4]	; adres
 	mov	ecx, [esp+8]	; stapel
@@ -646,7 +646,7 @@ creeertaak:
 	push	ebp
 	mov	ebp, esp
 	; verplaats esp naar BEGIN nieuwe stapel
-	lea	ecx, [ecx+STAPELGROOTTE]
+	lea	ecx, [ecx+STACKSIZE]
 	mov	esp, ecx
 	; plaats eflags op de stapel, maar zorg dat IF=1!
 	pushfd
@@ -668,17 +668,17 @@ creeertaak:
 	push	dword 0		; ebp
 	push	dword 0		; esi
 	push	dword 0		; edi
-	;; initialisatie van de takenlijst:
+	;; initialisatie van de tasklist:
         cli
-        lea	ecx, [takenlijst - 8]
+        lea	ecx, [tasklist - 8]
 .leegzoeklus:
         add	ecx, 8
         cmp	dword [ecx], 0
         jne	.leegzoeklus
-	; plaats de correct esp in de takenlijst
+	; plaats de correct esp in de tasklist
 	mov	dword[ecx], esp
- 	; plaats de correcte tijd in de takenlijst
-	mov	eax, [Huidige_Tick]
+ 	; plaats de correcte tijd in de tasklist
+	mov	eax, [Current_Tick]
 	add	eax, edx	
 	mov	dword[ecx+4], eax
 	sti
@@ -688,18 +688,18 @@ creeertaak:
 	ret
 
 
-creeer_idle_taak: ; Vraag 3
+creeer_idle_taak: ; Not needed this year
 ; creeer_idle_taak()
 ; ....................
  	ret
 
 
-termineertaak: ; Optioneel in 2020
-; Krijgt de offset in bytes in de takenlijst
-; van de taak die getermineerd moet worden.
-; termineertaak gooit de taak die deze routine oproept uit de takenlijst (vragen 4 en 5)
-; en zet de uitvoering, indien nodig, verder met een andere taak uit de takenlijst (voor vraag 5)
+terminatetask:
 ; termineertaak(taakslotnummer)
+; Krijgt de index in de tasklist
+; van de taak die getermineerd moet worden.
+; termineertaak gooit de taak die deze routine oproept uit de tasklist
+; en zet de uitvoering, indien nodig, verder met een andere taak uit de tasklist
 
 ; ....................
 
@@ -715,48 +715,47 @@ sleep:
         pushad
         lea     ebx, [awake]
         mov     [esp+4*8], ebx
-        mov     ebx, [Huidige_Taak]
+        mov     ebx, [Current_Task]
         cli
         mov     dword [ebx],esp
-        mov     dword ecx, [Huidige_Tick]
+        mov     dword ecx, [Current_Tick]
         add     eax, ecx
         mov     dword [ebx + 4], eax
-        jmp     schedulerhandler.taakzoeklus
+        jmp     schedulerhandler.tasksearchloop
 awake:
         popad
         pop eax
         ret
 
-; Niet nodig in 2020
+lower_priority:
+; lower_priority(task_index)
 ; ..............
-verander_huidige_prioriteit:
-
 
 ; Aanpassen in vraag 2 & 4
 ; ..............
 schedulerhandler:
         pushad
-        inc     dword [Huidige_Tick]
+        inc     dword [Current_Tick]
         mov	al, 0x20
         out	0x20, al
         sti
-        mov	ebx, [Huidige_Taak]
+        mov	ebx, [Current_Task]
         mov	dword [ebx],esp
         mov     dword [ebx + 4], 0
-        mov    ecx, [Huidige_Tick]
-	call	animatiestap
+        mov    ecx, [Current_Tick]
+	call	animationstep
         cli
-.taakzoeklus:
+.tasksearchloop:
         add	ebx, 8
-        cmp	ebx, takenlijst + (MAX_TAKEN * 8)
-        jl	.nog_niet_aan_het_einde
-        lea	ebx, [takenlijst]
-.nog_niet_aan_het_einde:
+        cmp	ebx, tasklist + (MAX_TAKEN * 8)
+        jl	.not_yet_at_the_end
+        lea	ebx, [tasklist]
+.not_yet_at_the_end:
         cmp	dword [ebx],0
-        je	.taakzoeklus
+        je	.tasksearchloop
         cmp     dword [ebx+4], ecx
-        jg      .taakzoeklus
-        mov     [Huidige_Taak], ebx
+        jg      .tasksearchloop
+        mov     [Current_Task], ebx
         mov     esp, [ebx]
         popad
         iret
@@ -768,7 +767,7 @@ ANIM_Y EQU 20
 ANIMATIE_FRAME db "/", 0
 CHECK_FAIL db "Check FAIL: ", 0
 
-animatiestap:
+animationstep:
 pushad
 cmp	byte [ANIMATIE_FRAME], '/'
 je	animatie_1
