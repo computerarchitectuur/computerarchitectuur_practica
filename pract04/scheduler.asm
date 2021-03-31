@@ -311,7 +311,7 @@ STACKSIZE equ 500
 ; bevat deze lijst informatie over wanneer in de tijd een taak mag uitgevoerd worden
 
 tasklist times 2*MAX_TAKEN dd (0)
-idle_task_slot  times 2 dd (0) ; Nodig in vraag 3
+idle_task_slot  times 2 dd (0) ; NIET NODIG dit jaar!
 
 
 ; Hier worden enkele stapels gedefinieerd van elk STACKSIZE grootte (bytes!).
@@ -321,7 +321,7 @@ stapel1    times STACKSIZE db (0)
 stapel2    times STACKSIZE db (0)
 mainstapel times STACKSIZE db (0)
 infostapel times STACKSIZE db (0)
-idlestapel times STACKSIZE db (0) ; Nodig in vraag 3
+idlestapel times STACKSIZE db (0) ; Nodig in vraag 5
 
 einde_stapels times 1 dd (0)
 
@@ -431,7 +431,6 @@ main:
 ; Start de taken
 ; .............
 
-    ; Vraag 3
     ; ..............
 
 	;; installeer taak1
@@ -620,7 +619,7 @@ PrintInfoTaskLoop:
   cmp   ecx, MAX_TAKEN
   jl    .printTaken
 
-  ; Vraag 1&4
+  ; 
   ; .......
 
   jmp   PrintInfoTaskLoop
@@ -628,7 +627,7 @@ PrintInfoTaskLoop:
 
 IdleTask:
         ; Schrijf naar het scherm dat de idle taak gebruikt wordt
-        ; Wordt gebruikt in vraag 3/4 (maar moet niet aangepast worden)
+        ; Wordt gebruikt in vraag 5
         jmp     IdleTask
 
 
@@ -731,7 +730,7 @@ lower_priority:
 ; lower_priority(task_index)
 ; ..............
 
-; Aanpassen in vraag 2 & 4
+; Aanpassen in vraag 4
 ; ..............
 schedulerhandler:
         pushad
@@ -943,7 +942,7 @@ hex:	mov     [ebp-12+ecx],dl
 ;
 
 ShortDelay:
-        ; ..... (Vraag 1)
+        ; ..... (Vraag 3&5)
 	ret
 
 ; --------------------
