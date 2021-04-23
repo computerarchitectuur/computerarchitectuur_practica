@@ -26,6 +26,7 @@
 0017 |AddMultiple|      |      |      |      |      |      |      |      |      |      |      |      
 0018 |IncAndBrne|      |      |      |      |      |      |      |      |      |      |      |      
 0019 |Strcpy|      |      |      |      |      |      |      |      |      |      |      |      
+001A |Memcpy|      |      |      |      |      |      |      |      |      |      |      |      
 
 [Jump Tables]
 ;Opcode  |Jump Table 1 |Jump Table 2 
@@ -47,5 +48,5 @@ BRNE     |Brne         |
 VECTORCOMP|             |             
 ADDMULTIPLE|             |             
 INCBRNE  |             |             
-STRCPY   |             |             
+MEMCMP   |             |             
 
