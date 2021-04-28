@@ -30,7 +30,7 @@ BRNE     | I  |r1,j
 VECTORCOMP| I  |r1,r2,i
 ADDMULTIPLE| I  |r1,r2,i
 INCBRNE  | I  |r1,r2,j
-MEMCMP   | R  |r1,r2,r3
+MEMCPY   | R  |r1,r2,r3
 
 [Microprogrammed Architecture]
 MicroCodeSize=256

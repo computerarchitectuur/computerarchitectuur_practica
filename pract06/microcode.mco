@@ -48,5 +48,5 @@ BRNE     |Brne         |
 VECTORCOMP|             |             
 ADDMULTIPLE|             |             
 INCBRNE  |             |             
-MEMCMP   |             |             
+MEMCPY   |             |             
 
