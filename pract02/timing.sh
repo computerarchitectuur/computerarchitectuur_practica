@@ -1,6 +1,19 @@
 #!/bin/bash
 
-VALGRIND=/usr/local/bin/valgrind
+VALGRIND=valgrind
+
+get_nr_cycles() {
+	if [ ! -e timing.out ]; then
+		return 0
+	fi
+
+	Instr=$(tail -1 timing.out | cut -d " " -f 2)
+	Data_read=$(tail -1 timing.out | cut -d " " -f 5)
+	Data_write=$(tail -1 timing.out | cut -d " " -f 8)
+
+	total_cycles=$(($Instr + 153 * ($Data_read + $Data_write)))
+}
+
 
 if [[ "$1" == "" ]]
 then
@@ -10,7 +23,10 @@ fi
 
 n=$1
 iteraties=1000
-PROG=leonardo
+if [ -n $2 ]; then
+	iteraties=$2
+fi
+PROG=narayana
 
 rm ./${PROG}
 make pract02
@@ -22,56 +38,44 @@ then
 fi
 
 $VALGRIND --tool=cachegrind --cachegrind-out-file=timing.out ./${PROG} $n $iteraties &> output
-cat output | grep leonardo
-cat output | grep "Gesimuleerde" # | awk '{print $4}'
+cat output | grep Narayana 
+#cat output | grep "Gesimuleerde" # | awk '{print $4}'
+get_nr_cycles
+echo "Gesimuleerd: $total_cycles cycli"
+
 
 echo # Empty line
 
 correctnesscheck() {
-   declare -A correctewaarden
-   correctewaarden[0]=2
-   correctewaarden[1]=2
-   correctewaarden[2]=6
-   correctewaarden[3]=10
-   correctewaarden[4]=18
-   correctewaarden[5]=30
-   correctewaarden[6]=50
-   correctewaarden[7]=82
-   correctewaarden[8]=134
-   correctewaarden[9]=218
-   correctewaarden[10]=354
-   correctewaarden[11]=574
-   correctewaarden[12]=930
-   correctewaarden[13]=1506
-   correctewaarden[14]=2438
-   correctewaarden[15]=3946
-   correctewaarden[16]=6386
-   correctewaarden[17]=10334
-   correctewaarden[18]=16722
-   correctewaarden[19]=27058
-   correctewaarden[20]=43782
-   correctewaarden[21]=70842
-   correctewaarden[22]=114626
-   correctewaarden[23]=185470
-   correctewaarden[24]=300098
-   correctewaarden[25]=485570
-   correctewaarden[26]=785670
-   correctewaarden[27]=1271242
-   correctewaarden[28]=2056914
-   correctewaarden[29]=3328158
-   correctewaarden[30]=5385074
-   correctewaarden[31]=8713234
-
-   result=`./${PROG} $1 1 | cut '-d=' -f3 | cut -'d ' -f2 `
-   if [[ "$result" != ${correctewaarden[$1]} ]]
+   correctewaarden[0]=1
+   correctewaarden[1]=1
+   correctewaarden[2]=1
+   correctewaarden[3]=2
+   correctewaarden[4]=3
+   correctewaarden[5]=4
+   correctewaarden[6]=6
+   correctewaarden[7]=9
+   correctewaarden[8]=13
+   correctewaarden[9]=19
+   correctewaarden[10]=28
+   correctewaarden[11]=41
+   correctewaarden[12]=60
+   correctewaarden[13]=88
+   correctewaarden[14]=129
+   correctewaarden[15]=189
+   correctewaarden[16]=277
+   correctewaarden[17]=406
+   correctewaarden[18]=595
+   correctewaarden[19]=872
+   correctewaarden[20]=1278
+   correctewaarden[21]=1873
+   correctewaarden[22]=2745
+   
+   i=$n
+   result=`./${PROG} $i 1 | cut '-d=' -f2 | cut -'d ' -f2 `
+   if [[ "$result" != ${correctewaarden[$i]} ]]
    then
-	   echo "Fout! De correcte waarde voor ${PROG}($1) moet ${correctewaarden[$1]} zijn, maar je programma geeft $result terug!"
+	   echo "Fout! De correcte waarde voor ${PROG}($i) moet ${correctewaarden[$i]} zijn, maar je programma geeft $result terug!"
   fi
 }
-correctnesscheck 0
-correctnesscheck 1
-correctnesscheck 2
-correctnesscheck 4
-correctnesscheck 8
-correctnesscheck 16
-correctnesscheck $n $k
+correctnesscheck

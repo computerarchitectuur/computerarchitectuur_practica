@@ -1,0 +1,93 @@
+################################################################################
+#Gelieve elke keer op de volgende lijn te antwoorden
+#Je mag (#) gebruiken als comment voor jezelf, die lijnen worden genegeerd
+#Alles <tussen> "diamond brackets" mogen vervangen worden door je antwoord.
+################################################################################
+
+0.1 Groups nummer
+<vervang dit door je nummer>
+
+0.2 Groups leden
+<naam1>
+<naam2>
+
+################################################################################
+
+1.1 Hoeveel klokcycli heb je nodig voor narayana(8), 1000 keer te berekenen?
+<#cycli>
+
+################################################################################
+
+2.1 Welke aanpassingen kan je maken, om de stapel te herleiden tot het minimum? (Bondig/algemene uitleg is voldoende)
+<aanpassing 1>
+<aanpassing 2>
+<...>
+
+2.2 Wat is de klokcyli verbetering voor narayana(8) nu?
+<#cycli>
+
+2.3 Let uit waarom je deze verbetering hebt?
+<uitleg>
+<...>
+
+################################################################################
+
+3.1 Hoeveel klokcyli verbetering had de beste optmisatie?
+<#cycli>
+
+3.2 Waarom is dit de beste optimisatie? Is er een bepaald soort instructie(s) die een grotere impact hebben?
+<uitleg>
+<...>
+
+################################################################################
+
+4.1 Hoeveel klokcyli verbetering had de 1ste beste optmisatie?
+<#cycli>
+
+4.2 Waarom dacht je dit de beste optimisatie was?
+<uitleg>
+<...>
+
+4.3 Hoeveel klokcyli verbetering had de 2de beste optmisatie?
+<#cycli>
+
+4.4 Waarom dacht je dit de beste optimisatie was?
+<uitleg>
+<...>
+
+################################################################################
+
+# 5. Maak het CFG op een apparte pdf
+
+################################################################################
+
+6.1 Hoe worden het argument "n" doorgegeven in zijn 64-bit versie?
+<antwoord>
+
+6.2 Hoe worden het argument "n" doorgegeven in zijn 32-bit versie?
+<antwoord>
+
+6.3 Wat zou de impact zijn op uitvoeringstijd? Waarom is dit zo?
+<uitleg>
+<...>
+
+################################################################################
+
+7.1 Hoeveel klokcyli verbetering heb je dankzij de 64-bit oproepconventie?
+<#cycli>
+
+################################################################################
+
+8.1 Hoeveel klokcyli verbetering had de 1ste beste optmisatie?
+<#cycli>
+
+8.2 Waarom dacht je dit de beste optimisatie was?
+<uitleg>
+<...>
+
+8.3 Hoeveel klokcyli verbetering had de 2de beste optmisatie?
+<#cycli>
+
+8.4 Waarom dacht je dit de beste optimisatie was?
+<uitleg>
+<...>

@@ -1,11 +1,13 @@
-pract01: getemacs
-	gcc -O0 -S -m32 leonardo.c
-	gcc -O0 -m32 leonardo.c -g -o leonardo
+name=narayana
+
+pract01: #Check if the fno-pie is needed or not?
+	gcc -O0 -fno-pie -no-pie -S -m32 ${name}.c
+	gcc -O0 -fno-pie -no-pie -m32 ${name}.c -g -o ${name}
 
 clean:
-	rm -rf leonardo.s leonardo
+	rm -rf ${name}.s ${name}
 
-getemacs:
-	cp .emacs ../..
+# getemacs:
+# 	cp .emacs ../..
 
-.PHONY: clean getemacs
+.PHONY: clean getemacs pract01
