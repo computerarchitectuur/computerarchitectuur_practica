@@ -4,10 +4,10 @@
 #Alles <tussen> "diamond brackets" mogen vervangen worden door je antwoord.
 ################################################################################
 
-0.1 Groups nummer
+0.1 Groepsnummer
 <vervang dit door je nummer>
 
-0.2 Groups leden
+0.2 Groepsleden
 <naam1>
 <naam2>
 

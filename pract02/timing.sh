@@ -23,7 +23,7 @@ fi
 
 n=$1
 iteraties=1000
-if [ -n $2 ]; then
+if [ -n "$2" ]; then
 	iteraties=$2
 fi
 PROG=narayana
