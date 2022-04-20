@@ -311,7 +311,7 @@ STACKSIZE equ 500
 ; bevat deze lijst informatie over wanneer in de tijd een taak mag uitgevoerd worden
 
 tasklist times 2*MAX_TAKEN dd (0)
-idle_task_slot  times 2 dd (0) ; NIET NODIG dit jaar!
+idle_task_slot  times 2 dd (0)
 
 
 ; Hier worden enkele stapels gedefinieerd van elk STACKSIZE grootte (bytes!).
@@ -321,7 +321,7 @@ stapel1    times STACKSIZE db (0)
 stapel2    times STACKSIZE db (0)
 mainstapel times STACKSIZE db (0)
 infostapel times STACKSIZE db (0)
-idlestapel times STACKSIZE db (0) ; Nodig in vraag 5
+idlestapel times STACKSIZE db (0) ; Nodig in vraag 3
 
 einde_stapels times 1 dd (0)
 
@@ -627,7 +627,7 @@ PrintInfoTaskLoop:
 
 IdleTask:
         ; Schrijf naar het scherm dat de idle taak gebruikt wordt
-        ; Wordt gebruikt in vraag 5
+        ; Wordt gebruikt in vraag 3
         jmp     IdleTask
 
 
@@ -687,19 +687,20 @@ createtask:
 	ret
 
 
-creeer_idle_taak: ; Not needed this year
+creeer_idle_taak: ; Vraag 3
 ; creeer_idle_taak()
 ; ....................
  	ret
 
 
 terminatetask:
-; termineertaak(taakslotnummer)
+; terminatetask(taakslotnummer)
 ; Krijgt de index in de tasklist
 ; van de taak die getermineerd moet worden.
-; termineertaak gooit de taak die deze routine oproept uit de tasklist
+; terminatetask gooit de taak die deze routine oproept uit de tasklist
 ; en zet de uitvoering, indien nodig, verder met een andere taak uit de tasklist
-
+; 
+; Vraag 5
 ; ....................
 
 
@@ -730,7 +731,7 @@ lower_priority:
 ; lower_priority(task_index)
 ; ..............
 
-; Aanpassen in vraag 4
+; Aanpassen in vraag 2/3
 ; ..............
 schedulerhandler:
         pushad
@@ -942,7 +943,7 @@ hex:	mov     [ebp-12+ecx],dl
 ;
 
 ShortDelay:
-        ; ..... (Vraag 3&5)
+        ; ..... (Vraag 1)
 	ret
 
 ; --------------------
