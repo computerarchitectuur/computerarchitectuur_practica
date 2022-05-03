@@ -27,6 +27,8 @@
 0018 |IncAndBrne|      |      |      |      |      |      |      |      |      |      |      |      
 0019 |Strcpy|      |      |      |      |      |      |      |      |      |      |      |      
 001A |Memcpy|      |      |      |      |      |      |      |      |      |      |      |      
+001B |Add4  |      |      |      |      |      |      |      |      |      |      |      |      
+001C |LdAddSt|      |      |      |      |      |      |      |      |      |      |      |      
 
 [Jump Tables]
 ;Opcode  |Jump Table 1 |Jump Table 2 
@@ -45,8 +47,6 @@ SUB      |Sub          |
 SUBI     |             |             
 HALT     |Halt         |             
 BRNE     |Brne         |             
-VECTORCOMP|             |             
-ADDMULTIPLE|             |             
-INCBRNE  |             |             
-MEMCPY   |             |             
+ADD4     |             |             
+LDADDST  |             |             
 

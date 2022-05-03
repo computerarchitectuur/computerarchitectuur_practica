@@ -27,10 +27,8 @@ SUB      | R  |r1,r2,r3
 SUBI     | I  |r1,i,r2
 HALT     | J  |
 BRNE     | I  |r1,j
-VECTORCOMP| I  |r1,r2,i
-ADDMULTIPLE| I  |r1,r2,i
-INCBRNE  | I  |r1,r2,j
-MEMCPY   | R  |r1,r2,r3
+ADD4     | I  |r1,r2,r3
+LDADDST  | I  |r1,r2,r3
 
 [Microprogrammed Architecture]
 MicroCodeSize=256
