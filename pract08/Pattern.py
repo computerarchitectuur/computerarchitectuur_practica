@@ -57,7 +57,7 @@ class ColumnMajor(AbstractPattern):
     def simulate(self, cache):
         for iii in range(self.matrix_A.nr_of_rows):
             for jjj in range(self.matrix_A.nr_of_cols):
-                # B[ j ][ j ] = A[ j ][ i ]*2
+                # B[ j ][ i ] = A[ j ][ i ]*2
                 cache.do_request('A', self.matrix_A.get_elem_address(jjj, iii))
                 cache.do_request('B', self.matrix_B.get_elem_address(jjj, iii))
 
@@ -82,10 +82,10 @@ class MatrixTiledMultiply(AbstractPattern):
                         for jjj in range(jjj0, jjj0 + tilesize):
                             for kkk in range(kkk0, kkk0 + tilesize):
                                 # C[ i ][ j ] = C[ i ][ j ]+ A[ i ][ k ]* B[ k ][ j ]
-                                cache.do_request('Cwrite', self.matrix_C.get_elem_address(iii, jjj))
+                                cache.do_request('Cread', self.matrix_C.get_elem_address(iii, jjj))
                                 cache.do_request('A', self.matrix_A.get_elem_address(iii, kkk))
                                 cache.do_request('B', self.matrix_B.get_elem_address(kkk, jjj))
-                                cache.do_request('Cread', self.matrix_C.get_elem_address(iii, jjj))
+                                cache.do_request('Cwrite', self.matrix_C.get_elem_address(iii, jjj))
 
 def get_types():
     return AbstractPattern.__subclasses__()
