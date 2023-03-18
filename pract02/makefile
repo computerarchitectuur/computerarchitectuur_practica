@@ -1,4 +1,4 @@
-name=narayana
+name=telephone
 
 all:
 	@echo "Gebruik een van de volgende targets: assembly, pract02, pract02_opt, clean"

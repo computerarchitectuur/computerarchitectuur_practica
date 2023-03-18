@@ -1,0 +1,38 @@
+#!/bin/bash
+
+failed=0
+
+function check_file() {
+    if [ ! -f "$1" ]; then
+        printf "\033[0;33mFOUT: Het bestand $1 ontbreekt!\033[0m\n" >&2
+        failed=1
+    else
+        if [ "$2" == "1" ]; then
+            tmp_file=$(mktemp || exit 1)
+            gcc -fno-pie -no-pie -m32 "$1" -o "$tmp_file"_bin # &> /dev/null
+            if [ $? -ne 0 ]; then
+                printf "\033[0;33mFOUT: Het bestand $1 kan niet worden geassembleerd (zie bovenstaande assembler foutmelding)!\033[0m\n" >&2
+                failed=1
+            fi
+            rm -f "$tmp_file"
+        fi
+    fi
+}
+
+rm -f indiening.zip
+
+check_file practicum2_vraag2.s 1
+check_file practicum2_vraag3.s 1
+check_file practicum2_vraag4.s 1
+check_file practicum2_vraag7.s 1
+check_file practicum2_vraag8.s 1
+check_file antwoorden.txt 0
+check_file practicum2_controleverloopgraaf.pdf 0
+
+if [ "$failed" == "1" ]; then
+    exit 1
+fi
+
+zip indiening.zip practicum2_vraag2.s practicum2_vraag3.s practicum2_vraag4.s practicum2_vraag7.s practicum2_vraag8.s antwoorden.txt practicum2_controleverloopgraaf.pdf
+
+printf "\033[0;32mZip gemaakt! Gelieve het bestand indiening.zip op te laden op Ufora bij de opdracht.\033[0m\n" >&2

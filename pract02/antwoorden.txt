@@ -5,7 +5,7 @@
 ################################################################################
 
 0.1 Groepsnummer
-<vervang dit door je nummer>
+<vervang dit door je groepsnummer>
 
 0.2 Groepsleden
 <naam1>
@@ -13,7 +13,7 @@
 
 ################################################################################
 
-1.1 Hoeveel klokcycli heb je nodig voor narayana(8), 1000 keer te berekenen?
+1.1 Hoeveel klokcycli heb je nodig voor telephone(9), 1000 keer te berekenen?
 <#cycli>
 
 ################################################################################
@@ -23,7 +23,7 @@
 <aanpassing 2>
 <...>
 
-2.2 Wat is de klokcyli verbetering voor narayana(8) nu?
+2.2 Wat is de klokcyli verbetering voor telephone(9) nu?
 <#cycli>
 
 2.3 Let uit waarom je deze verbetering hebt?
@@ -61,10 +61,10 @@
 
 ################################################################################
 
-6.1 Hoe worden het argument "n" doorgegeven in zijn 64-bit versie?
+6.1 Hoe wordt het argument "n" doorgegeven in zijn 64-bit versie?
 <antwoord>
 
-6.2 Hoe worden het argument "n" doorgegeven in zijn 32-bit versie?
+6.2 Hoe wordt het argument "n" doorgegeven in zijn 32-bit versie?
 <antwoord>
 
 6.3 Wat zou de impact zijn op uitvoeringstijd? Waarom is dit zo?
