@@ -9,7 +9,7 @@ function check_file() {
     else
         if [ "$2" == "1" ]; then
             tmp_file=$(mktemp || exit 1)
-            gcc -fno-pie -no-pie -m32 "$1" -o "$tmp_file"_bin # &> /dev/null
+            gcc -c -fno-pie -no-pie -m32 "$1" -o "$tmp_file"_bin # &> /dev/null
             if [ $? -ne 0 ]; then
                 printf "\033[0;33mFOUT: Het bestand $1 kan niet worden geassembleerd (zie bovenstaande assembler foutmelding)!\033[0m\n" >&2
                 failed=1
