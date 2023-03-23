@@ -80,7 +80,7 @@ correctnesscheck_output() {
    result=`./${PROG} $i 1 | cut '-d=' -f2 | cut -'d ' -f2 `
    if [[ "$result" != ${correctewaarden[$i]} ]]
    then
-	   printf "\033[0;33mFOUT!\033[0m De correcte waarde voor ${PROG}($i) moet ${correctewaarden[$i]} zijn, maar je programma geeft $result terug!"
+	   printf "\033[0;33mFOUT!\033[0m De correcte waarde voor ${PROG}($i) moet ${correctewaarden[$i]} zijn, maar je programma geeft $result terug!\n"
   fi
 }
 
