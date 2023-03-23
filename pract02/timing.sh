@@ -40,10 +40,14 @@ make pract02
 if [ ! -e ./${PROG} ]
 then
   echo "Er was een FOUT bij het assembleren van je ${PROG}.s!"
-  exit
+  exit 1
 fi
 
 $VALGRIND --tool=cachegrind --cachegrind-out-file=timing.out ./${PROG} $n $iteraties &> output
+if [ "$?" -ne 0 ]; then
+  printf "\033[0;33mFOUT!\033[0m Het programma is gecrasht. Dit komt wellicht door een foute aanpassing. Bekijk eens de debug tips in de opgave.\n"
+  exit 1
+fi
 cat output | grep Telephone 
 get_nr_cycles
 echo "Gesimuleerd: $total_cycles cycli"
