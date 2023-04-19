@@ -321,7 +321,7 @@ stapel1    times STACKSIZE db (0)
 stapel2    times STACKSIZE db (0)
 mainstapel times STACKSIZE db (0)
 infostapel times STACKSIZE db (0)
-idlestapel times STACKSIZE db (0) ; Nodig in vraag 3
+idlestapel times STACKSIZE db (0) ; Nodig in Vraag 5
 
 einde_stapels times 1 dd (0)
 
@@ -627,7 +627,7 @@ PrintInfoTaskLoop:
 
 IdleTask:
         ; Schrijf naar het scherm dat de idle taak gebruikt wordt
-        ; Wordt gebruikt in vraag 3
+        ; Wordt gebruikt in Vraag 5
         jmp     IdleTask
 
 
