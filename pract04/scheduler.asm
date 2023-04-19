@@ -687,7 +687,7 @@ createtask:
 	ret
 
 
-creeer_idle_taak: ; Vraag 3
+creeer_idle_taak: ; Vraag 5
 ; creeer_idle_taak()
 ; ....................
  	ret
@@ -700,7 +700,7 @@ terminatetask:
 ; terminatetask gooit de taak die deze routine oproept uit de tasklist
 ; en zet de uitvoering, indien nodig, verder met een andere taak uit de tasklist
 ; 
-; Vraag 5
+; Vraag 1 + Vraag 2
 ; ....................
 
 
@@ -728,11 +728,10 @@ awake:
         ret
 
 lower_priority:
-; lower_priority(task_index)
+; lower_priority(task_index) -> niet voor dit jaar
 ; ..............
 
-; Aanpassen in vraag 2/3
-; ..............
+; Aanpassen in Vraag 4 & Vraag 6
 schedulerhandler:
         pushad
         inc     dword [Current_Tick]
@@ -943,7 +942,7 @@ hex:	mov     [ebp-12+ecx],dl
 ;
 
 ShortDelay:
-        ; ..... (Vraag 1)
+        ; ..... Vraag 3
 	ret
 
 ; --------------------
