@@ -21,14 +21,14 @@ BRGE     | I  |r1,j
 JUMP     | I  |j
 MULT     | R  |r1,r2,r3
 COMP     | I  |r1,r2,i
-DBRNZ    | I  |r1,j
+DBRNE    | I  |r1,j
 BRLE     | I  |r1,j
 SUB      | R  |r1,r2,r3
 SUBI     | I  |r1,i,r2
 HALT     | J  |
 BRNE     | I  |r1,j
-ADD4     | I  |r1,r2,r3
-LDADDST  | I  |r1,r2,r3
+MADD     | I  |r1,r2,r3
+DOTPRODUCT | I  |r1,r2,r3
 
 [Microprogrammed Architecture]
 MicroCodeSize=256

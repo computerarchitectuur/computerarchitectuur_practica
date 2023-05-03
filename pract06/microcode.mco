@@ -41,12 +41,12 @@ BRGE     |Brge         |
 JUMP     |Jump         |             
 MULT     |Mult         |             
 COMP     |             |             
-DBRNZ    |             |             
+DBRNE    |             |             
 BRLE     |             |             
 SUB      |Sub          |             
 SUBI     |             |             
-HALT     |Halt         |             
+HALT     |             |             
 BRNE     |Brne         |             
-ADD4     |             |             
-LDADDST  |             |             
+MADD     |             |             
+DOTPRODUCT|             |             
 
