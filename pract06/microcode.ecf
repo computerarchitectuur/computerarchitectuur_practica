@@ -29,6 +29,7 @@ HALT     | J  |
 BRNE     | I  |r1,j
 MADD     | I  |r1,r2,r3
 DOTPRODUCT | I  |r1,r2,r3
+ADD4     | I  |r1,r2,r3
 
 [Microprogrammed Architecture]
 MicroCodeSize=256
