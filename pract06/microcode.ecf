@@ -27,9 +27,9 @@ SUB      | R  |r1,r2,r3
 SUBI     | I  |r1,i,r2
 HALT     | J  |
 BRNE     | I  |r1,j
-MADD     | I  |r1,r2,r3
-DOTPRODUCT | I  |r1,r2,r3
-ADD4     | I  |r1,r2,r3
+MADD     | R  |r1,r2,r3
+DOTPRODUCT | R  |r1,r2,r3
+ADD4     | R  |r1,r2,r3
 
 [Microprogrammed Architecture]
 MicroCodeSize=256
