@@ -21,7 +21,7 @@ BRGE     | I  |r1,j
 JUMP     | I  |j
 MULT     | R  |r1,r2,r3
 COMP     | I  |r1,r2,i
-DBRNE    | I  |r1,j
+DBRNE    | I  |r1,r2,j
 BRLE     | I  |r1,j
 SUB      | R  |r1,r2,r3
 SUBI     | I  |r1,i,r2
