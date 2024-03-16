@@ -13,7 +13,7 @@
 
 ################################################################################
 
-1.1 Hoeveel klokcycli heb je nodig voor telephone(9), 1000 keer te berekenen?
+1.1 Hoeveel klokcycli heb je nodig voor pell(9), 1000 keer te berekenen?
 <#cycli>
 
 ################################################################################
@@ -23,7 +23,7 @@
 <aanpassing 2>
 <...>
 
-2.2 Wat is de klokcyli verbetering voor telephone(9) nu?
+2.2 Wat is de klokcyli verbetering voor pell(9) nu?
 <#cycli>
 
 2.3 Let uit waarom je deze verbetering hebt?
