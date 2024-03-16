@@ -21,9 +21,8 @@ then
   exit 1
 fi
 
-if [ "$1" -gt 21 ]
-then
-  echo "<n> mag maximaal 21 zijn" >&2
+if [ "$1" -gt 21 ]; then
+  printf "\033[0;33mFOUT!\033[0m <n> mag maximaal 21 zijn.\n"
   exit 1
 fi
 
@@ -39,7 +38,7 @@ make pract02
 
 if [ ! -e ./${PROG} ]
 then
-  echo "Er was een FOUT bij het assembleren van je ${PROG}.s!"
+  printf "\033[0;33mFOUT!\033[0m Het assembleren van je code is gefaald.\n"
   exit 1
 fi
 
@@ -48,7 +47,7 @@ if [ "$?" -ne 0 ]; then
   printf "\033[0;33mFOUT!\033[0m Het programma is gecrasht. Dit komt wellicht door een foute aanpassing. Bekijk eens de debug tips in de opgave.\n"
   exit 1
 fi
-cat output | grep Pell
+cat output | grep $PROG 
 get_nr_cycles
 echo "Gesimuleerd: $total_cycles cycli"
 
@@ -56,6 +55,7 @@ echo "Gesimuleerd: $total_cycles cycli"
 echo # Empty line
 
 correctnesscheck_output() {
+   correctewaarden[0]=0
    correctewaarden[1]=1
    correctewaarden[2]=2
    correctewaarden[3]=5
@@ -151,7 +151,7 @@ correctnesscheck_callingconvention() {
   tmp_file=$(mktemp || exit 1)
   trap 'rm -f -- "$tmp_file"' EXIT
   echo "$replacement" "$(sed "s|^main:$|main2:|" pell.s)" > "$tmp_file.s"
-  
+
   gcc -fno-pie -no-pie -m32 "$tmp_file.s" -o "$tmp_file"_bin &> /dev/null
   
   if [ $? -ne 0 ]
