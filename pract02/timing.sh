@@ -32,7 +32,7 @@ iteraties=1000
 if [ -n "$2" ]; then
 	iteraties=$2
 fi
-PROG=telephone
+PROG=pell
 
 rm ./${PROG}
 make pract02
@@ -48,7 +48,7 @@ if [ "$?" -ne 0 ]; then
   printf "\033[0;33mFOUT!\033[0m Het programma is gecrasht. Dit komt wellicht door een foute aanpassing. Bekijk eens de debug tips in de opgave.\n"
   exit 1
 fi
-cat output | grep Telephone 
+cat output | grep Pell
 get_nr_cycles
 echo "Gesimuleerd: $total_cycles cycli"
 
@@ -56,28 +56,27 @@ echo "Gesimuleerd: $total_cycles cycli"
 echo # Empty line
 
 correctnesscheck_output() {
-   correctewaarden[0]=1
    correctewaarden[1]=1
    correctewaarden[2]=2
-   correctewaarden[3]=4
-   correctewaarden[4]=10
-   correctewaarden[5]=26
-   correctewaarden[6]=76
-   correctewaarden[7]=232
-   correctewaarden[8]=764
-   correctewaarden[9]=2620
-   correctewaarden[10]=9496
-   correctewaarden[11]=35696
-   correctewaarden[12]=140152
-   correctewaarden[13]=568504
-   correctewaarden[14]=2390480
-   correctewaarden[15]=10349536
-   correctewaarden[16]=46206736
-   correctewaarden[17]=211799312
-   correctewaarden[18]=997313824
-   correctewaarden[19]=514734144
-   correctewaarden[20]=2283827616
-   correctewaarden[21]=3988575904
+   correctewaarden[3]=5
+   correctewaarden[4]=12
+   correctewaarden[5]=29
+   correctewaarden[6]=70
+   correctewaarden[7]=169
+   correctewaarden[8]=408
+   correctewaarden[9]=985
+   correctewaarden[10]=2378
+   correctewaarden[11]=5741
+   correctewaarden[12]=13860
+   correctewaarden[13]=33461
+   correctewaarden[14]=80782
+   correctewaarden[15]=195025
+   correctewaarden[16]=470832
+   correctewaarden[17]=1136689
+   correctewaarden[18]=2744210
+   correctewaarden[19]=6625109
+   correctewaarden[20]=15994428
+   correctewaarden[21]=38613965
 
    
    i=$n
@@ -109,7 +108,7 @@ main:
 	movl \$0x67586351, %edi
 
 	pushl \$4
-	call telephone
+	call pell
 	addl \$4, %esp
 
 	xorl %eax, %eax
@@ -151,7 +150,7 @@ EOM
 correctnesscheck_callingconvention() {
   tmp_file=$(mktemp || exit 1)
   trap 'rm -f -- "$tmp_file"' EXIT
-  echo "$replacement" "$(sed "s|^main:$|main2:|" telephone.s)" > "$tmp_file.s"
+  echo "$replacement" "$(sed "s|^main:$|main2:|" pell.s)" > "$tmp_file.s"
   
   gcc -fno-pie -no-pie -m32 "$tmp_file.s" -o "$tmp_file"_bin &> /dev/null
   
