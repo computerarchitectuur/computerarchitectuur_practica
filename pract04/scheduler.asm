@@ -309,7 +309,7 @@ STACKSIZE equ 500
 ; de stapel van de taak wanneer de taak niet aan het uitvoeren is. Indien 
 ; het element 0 is, wijst dit op de afwezigheid van een taak. Bovendien
 ; bevat deze lijst informatie over wanneer in de tijd een taak mag uitgevoerd worden
-
+; Vraag 2: pas dit aan!
 tasklist times 2*MAX_TAKEN dd (0)
 idle_task_slot  times 2 dd (0)
 
@@ -321,7 +321,7 @@ stapel1    times STACKSIZE db (0)
 stapel2    times STACKSIZE db (0)
 mainstapel times STACKSIZE db (0)
 infostapel times STACKSIZE db (0)
-idlestapel times STACKSIZE db (0) ; Nodig in Vraag 5
+idlestapel times STACKSIZE db (0) ; Nodig in Vraag 4
 
 einde_stapels times 1 dd (0)
 
@@ -431,7 +431,13 @@ main:
 ; Start de taken
 ; .............
 
+    ;; Vraag 3: change_current_priority oproepen
+    
+    ;; Vraag 4: IdleTask aanmaken
+
     ; ..............
+    
+    ;; Vraag 2: aanpassen voor de functie-oproepen naar createtask
 
 	;; installeer taak1
 	push	0
@@ -446,12 +452,14 @@ main:
 	push	Task2
 	call	createtask
 	add	esp, 12	
+	
+	;; Vraag 5 & 6: terminatetask oproepen
 
 
 	;; De hoofd-taak gaat gewoon PrintInfoTask direct uitvoeren
 	jmp PrintInfoTask
 
-
+	;; Zolang de jmp PrintInfoTask gedaan wordt, gaat dit niet uitgevoerd worden
 HoofdProgrammaGedaan:
         jmp     HoofdProgrammaGedaan
 
@@ -566,6 +574,7 @@ PrintInfoTaskLoop:
   call  printhex
   add   esp, 12
 
+  ;; Vraag 2: aanpassen
   ; Print taken-info:
   lea   esi, [tasklist]
   mov   ecx, 0
@@ -619,7 +628,7 @@ PrintInfoTaskLoop:
   cmp   ecx, MAX_TAKEN
   jl    .printTaken
 
-  ; 
+  ; Vraag 1
   ; .......
 
   jmp   PrintInfoTaskLoop
@@ -627,12 +636,13 @@ PrintInfoTaskLoop:
 
 IdleTask:
         ; Schrijf naar het scherm dat de idle taak gebruikt wordt
-        ; Wordt gebruikt in Vraag 5
+        ; Vraag 4: aanpassen
         jmp     IdleTask
 
 
 ;================================= SCHEDULING ==============================
 
+;; Vraag 2: aanpassen (voor aangepaste layout van takenlijst; voor extra argument)
 createtask:
 ; voeg een taak toe aan de tasklist
 ; oproepen als createtask(adres, stapel, wachttijd)
@@ -687,7 +697,7 @@ createtask:
 	ret
 
 
-creeer_idle_taak: ; Vraag 5
+creeer_idle_taak: ; Niet nodig dit jaar, doe dit gewoon in het hoofdprogramma
 ; creeer_idle_taak()
 ; ....................
  	ret
@@ -700,7 +710,7 @@ terminatetask:
 ; terminatetask gooit de taak die deze routine oproept uit de tasklist
 ; en zet de uitvoering, indien nodig, verder met een andere taak uit de tasklist
 ; 
-; Vraag 1 + Vraag 2
+; Vraag 5 + Vraag 6
 ; ....................
 
 
@@ -727,11 +737,12 @@ awake:
         pop eax
         ret
 
-lower_priority:
-; lower_priority(task_index) -> niet voor dit jaar
+change_current_priority:
+;; Vraag 3
+; change_current_priority(new_priority)
 ; ..............
 
-; Aanpassen in Vraag 4 & Vraag 6
+; Aanpassen in Vraag 2
 schedulerhandler:
         pushad
         inc     dword [Current_Tick]
@@ -942,7 +953,7 @@ hex:	mov     [ebp-12+ecx],dl
 ;
 
 ShortDelay:
-        ; ..... Vraag 3
+        ; ..... Vraag 1
 	ret
 
 ; --------------------
