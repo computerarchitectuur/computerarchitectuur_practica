@@ -29,6 +29,8 @@
 001A |Memcpy|      |      |      |      |      |      |      |      |      |      |      |      
 001B |Add4  |      |      |      |      |      |      |      |      |      |      |      |      
 001C |LdAddSt|      |      |      |      |      |      |      |      |      |      |      |      
+001D |Abs   |      |      |      |      |      |      |      |      |      |      |      |      
+001E |Sad   |      |      |      |      |      |      |      |      |      |      |      |      
 
 [Jump Tables]
 ;Opcode  |Jump Table 1 |Jump Table 2 
@@ -49,4 +51,7 @@ HALT     |             |
 BRNE     |Brne         |             
 MADD     |             |             
 DOTPRODUCT|             |             
+ADD4     |             |             
+ABS      |             |             
+SAD      |             |             
 

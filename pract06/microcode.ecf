@@ -30,6 +30,8 @@ BRNE     | I  |r1,j
 MADD     | R  |r1,r2,r3
 DOTPRODUCT | R  |r1,r2,r3
 ADD4     | R  |r1,r2,r3
+ABS      | R  |r1,r2
+SAD      | R  |r1,r2,r3
 
 [Microprogrammed Architecture]
 MicroCodeSize=256
