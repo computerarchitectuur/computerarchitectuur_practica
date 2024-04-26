@@ -20,7 +20,7 @@
 0011 |Brne  |S1    |A     |      |      |      |      |EQ    |Fetch |      |      |      |      
 0012 |      |ADD   |PC    |IR    |PC    |Word  |      |True  |Fetch |      |      |      |      
 0013 |Comp  |      |      |      |      |      |      |      |      |      |      |      |      
-0014 |Dbrnz |      |      |      |      |      |      |      |      |      |      |      |      
+0014 |Dbrne |      |      |      |      |      |      |      |      |      |      |      |      
 0015 |Subi  |      |      |      |      |      |      |      |      |      |      |      |      
 0016 |VectorComp|      |      |      |      |      |      |      |      |      |      |      |      
 0017 |AddMultiple|      |      |      |      |      |      |      |      |      |      |      |      
