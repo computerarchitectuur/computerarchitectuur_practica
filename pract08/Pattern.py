@@ -2,11 +2,14 @@ import Address
 from Matrix import Matrix
 
 class AbstractPattern:
-    def __init__(self, group_id, matrix_size):
+    def __init__(self, group_id, matrix_size, Bstartaddress):
         # Determine the sizes of all the matrices (these are the same) and
         # use it to assign addresses to each of them.
         matrices_size = Matrix.calculate_size(4, matrix_size, matrix_size)
         address_A, address_B, address_C = Address.assign_object_sizes(group_id, [matrices_size, matrices_size, matrices_size])
+
+        if Bstartaddress is not None:
+            address_B = Bstartaddress
 
         # Construct actual matrices on assigned addresses.
         self.matrix_A = Matrix(address_A, 4, matrix_size, matrix_size)
