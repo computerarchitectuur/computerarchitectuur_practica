@@ -1,4 +1,4 @@
-name=pell
+name=perrin
 
 pract01: getemacs
 	gcc -O0 -fno-pic -no-pie -fcf-protection=branch -S -m32 ${name}.c
