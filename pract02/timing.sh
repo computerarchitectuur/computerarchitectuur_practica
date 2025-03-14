@@ -31,7 +31,7 @@ iteraties=1000
 if [ -n "$2" ]; then
 	iteraties=$2
 fi
-PROG=pell
+PROG=perrin
 
 rm ./${PROG}
 make pract02
@@ -55,28 +55,28 @@ echo "Gesimuleerd: $total_cycles cycli"
 echo # Empty line
 
 correctnesscheck_output() {
-   correctewaarden[0]=0
-   correctewaarden[1]=1
+   correctewaarden[0]=3
+   correctewaarden[1]=0
    correctewaarden[2]=2
-   correctewaarden[3]=5
-   correctewaarden[4]=12
-   correctewaarden[5]=29
-   correctewaarden[6]=70
-   correctewaarden[7]=169
-   correctewaarden[8]=408
-   correctewaarden[9]=985
-   correctewaarden[10]=2378
-   correctewaarden[11]=5741
-   correctewaarden[12]=13860
-   correctewaarden[13]=33461
-   correctewaarden[14]=80782
-   correctewaarden[15]=195025
-   correctewaarden[16]=470832
-   correctewaarden[17]=1136689
-   correctewaarden[18]=2744210
-   correctewaarden[19]=6625109
-   correctewaarden[20]=15994428
-   correctewaarden[21]=38613965
+   correctewaarden[3]=3
+   correctewaarden[4]=2
+   correctewaarden[5]=5
+   correctewaarden[6]=5
+   correctewaarden[7]=7
+   correctewaarden[8]=10
+   correctewaarden[9]=12
+   correctewaarden[10]=17
+   correctewaarden[11]=22
+   correctewaarden[12]=29
+   correctewaarden[13]=39
+   correctewaarden[14]=51
+   correctewaarden[15]=68
+   correctewaarden[16]=90
+   correctewaarden[17]=119
+   correctewaarden[18]=158
+   correctewaarden[19]=209
+   correctewaarden[20]=277
+   correctewaarden[21]=367
 
    
    i=$n
@@ -108,7 +108,7 @@ main:
 	movl \$0x67586351, %edi
 
 	pushl \$4
-	call pell
+	call perrin
 	addl \$4, %esp
 
 	xorl %eax, %eax
@@ -150,7 +150,7 @@ EOM
 correctnesscheck_callingconvention() {
   tmp_file=$(mktemp || exit 1)
   trap 'rm -f -- "$tmp_file"' EXIT
-  echo "$replacement" "$(sed "s|^main:$|main2:|" pell.s)" > "$tmp_file.s"
+  echo "$replacement" "$(sed "s|^main:$|main2:|" perrin.s)" > "$tmp_file.s"
 
   gcc -fno-pie -no-pie -m32 "$tmp_file.s" -o "$tmp_file"_bin &> /dev/null
   
