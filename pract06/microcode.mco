@@ -31,6 +31,9 @@
 001C |LdAddSt|      |      |      |      |      |      |      |      |      |      |      |      
 001D |Abs   |      |      |      |      |      |      |      |      |      |      |      |      
 001E |Sad   |      |      |      |      |      |      |      |      |      |      |      |      
+001F |JIfLowerCase|      |      |      |      |      |      |      |      |      |      |      |      
+0020 |UpperChar|      |      |      |      |      |      |      |      |      |      |      |      
+0021 |UpperString|      |      |      |      |      |      |      |      |      |      |      |      
 
 [Jump Tables]
 ;Opcode  |Jump Table 1 |Jump Table 2 
@@ -54,4 +57,7 @@ DOTPRODUCT|             |
 ADD4     |             |             
 ABS      |             |             
 SAD      |             |             
+JIFLOWERCASE|             |             
+UPPERCHAR|             |             
+UPPERSTRING|             |             
 

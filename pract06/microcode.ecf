@@ -32,6 +32,9 @@ DOTPRODUCT | R  |r1,r2,r3
 ADD4     | R  |r1,r2,r3
 ABS      | R  |r1,r2
 SAD      | R  |r1,r2,r3
+JIFLOWERCASE | R |r1,j
+UPPERCHAR | R |r1
+UPPERSTRING | R |r1,r2
 
 [Microprogrammed Architecture]
 MicroCodeSize=256
