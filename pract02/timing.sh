@@ -7,6 +7,7 @@ get_nr_cycles() {
 		return 0
 	fi
 
+	# These fields match Ir, Dr, and Dw from the 'events: Ir I1mr ILmr Dr D1mr DLmr Dw D1mw DLmw ' line in the cachegrind output file
 	Instr=$(tail -1 timing.out | cut -d " " -f 2)
 	Data_read=$(tail -1 timing.out | cut -d " " -f 5)
 	Data_write=$(tail -1 timing.out | cut -d " " -f 8)
@@ -31,7 +32,7 @@ iteraties=1000
 if [ -n "$2" ]; then
 	iteraties=$2
 fi
-PROG=perrin
+PROG=pell-lucas
 
 rm ./${PROG}
 make pract02
@@ -42,7 +43,7 @@ then
   exit 1
 fi
 
-$VALGRIND --tool=cachegrind --cachegrind-out-file=timing.out ./${PROG} $n $iteraties &> output
+$VALGRIND --tool=cachegrind --cache-sim=yes --cachegrind-out-file=timing.out ./${PROG} $n $iteraties &> output
 if [ "$?" -ne 0 ]; then
   printf "\033[0;33mFOUT!\033[0m Het programma is gecrasht. Dit komt wellicht door een foute aanpassing. Bekijk eens de debug tips in de opgave.\n"
   exit 1
@@ -55,29 +56,28 @@ echo "Gesimuleerd: $total_cycles cycli"
 echo # Empty line
 
 correctnesscheck_output() {
-   correctewaarden[0]=3
-   correctewaarden[1]=0
-   correctewaarden[2]=2
-   correctewaarden[3]=3
-   correctewaarden[4]=2
-   correctewaarden[5]=5
-   correctewaarden[6]=5
-   correctewaarden[7]=7
-   correctewaarden[8]=10
-   correctewaarden[9]=12
-   correctewaarden[10]=17
-   correctewaarden[11]=22
-   correctewaarden[12]=29
-   correctewaarden[13]=39
-   correctewaarden[14]=51
-   correctewaarden[15]=68
-   correctewaarden[16]=90
-   correctewaarden[17]=119
-   correctewaarden[18]=158
-   correctewaarden[19]=209
-   correctewaarden[20]=277
-   correctewaarden[21]=367
-
+   correctewaarden[0]=1
+   correctewaarden[1]=1
+   correctewaarden[2]=3
+   correctewaarden[3]=7
+   correctewaarden[4]=17
+   correctewaarden[5]=41
+   correctewaarden[6]=99
+   correctewaarden[7]=239
+   correctewaarden[8]=577
+   correctewaarden[9]=1393
+   correctewaarden[10]=3363
+   correctewaarden[11]=8119
+   correctewaarden[12]=19601
+   correctewaarden[13]=47321
+   correctewaarden[14]=114243
+   correctewaarden[15]=275807
+   correctewaarden[16]=665857
+   correctewaarden[17]=1607521
+   correctewaarden[18]=3880899
+   correctewaarden[19]=9369319
+   correctewaarden[20]=22619537
+   correctewaarden[21]=54608393
    
    i=$n
    result=`./${PROG} $i 1 | cut '-d=' -f2 | cut -'d ' -f2 `
@@ -108,7 +108,7 @@ main:
 	movl \$0x67586351, %edi
 
 	pushl \$4
-	call perrin
+	call pell_lucas
 	addl \$4, %esp
 
 	xorl %eax, %eax
@@ -150,7 +150,7 @@ EOM
 correctnesscheck_callingconvention() {
   tmp_file=$(mktemp || exit 1)
   trap 'rm -f -- "$tmp_file"' EXIT
-  echo "$replacement" "$(sed "s|^main:$|main2:|" perrin.s)" > "$tmp_file.s"
+  echo "$replacement" "$(sed "s|^main:$|main2:|" pell-lucas.s)" > "$tmp_file.s"
 
   gcc -fno-pie -no-pie -m32 "$tmp_file.s" -o "$tmp_file"_bin &> /dev/null
   
