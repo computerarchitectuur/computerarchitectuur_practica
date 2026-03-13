@@ -23,16 +23,16 @@
 <aanpassing 2>
 <...>
 
-2.2 Wat is de klokcyli verbetering voor pell_lucas(12) nu?
+2.2 Wat is de klokcycli verbetering voor pell_lucas(12) nu?
 <#cycli>
 
-2.3 Let uit waarom je deze verbetering hebt?
+2.3 Leg uit waarom je deze verbetering hebt?
 <uitleg>
 <...>
 
 ################################################################################
 
-3.1 Hoeveel klokcyli verbetering had de beste optmisatie?
+3.1 Hoeveel klokcycli verbetering had de beste optmisatie?
 <#cycli>
 
 3.2 Waarom is dit de beste optimisatie? Is er een bepaald soort instructie(s) die een grotere impact hebben?
@@ -41,14 +41,14 @@
 
 ################################################################################
 
-4.1 Hoeveel klokcyli verbetering had de 1ste beste optmisatie?
+4.1 Hoeveel klokcycli verbetering had de 1ste beste optmisatie?
 <#cycli>
 
 4.2 Waarom dacht je dit de beste optimisatie was?
 <uitleg>
 <...>
 
-4.3 Hoeveel klokcyli verbetering had de 2de beste optmisatie?
+4.3 Hoeveel klokcycli verbetering had de 2de beste optmisatie?
 <#cycli>
 
 4.4 Waarom dacht je dit de beste optimisatie was?
@@ -73,19 +73,19 @@
 
 ################################################################################
 
-7.1 Hoeveel klokcyli verbetering heb je dankzij de 64-bit oproepconventie?
+7.1 Hoeveel klokcycli verbetering heb je dankzij de 64-bit oproepconventie?
 <#cycli>
 
 ################################################################################
 
-8.1 Hoeveel klokcyli verbetering had de 1ste beste optmisatie?
+8.1 Hoeveel klokcycli verbetering had de 1ste beste optmisatie?
 <#cycli>
 
 8.2 Waarom dacht je dit de beste optimisatie was?
 <uitleg>
 <...>
 
-8.3 Hoeveel klokcyli verbetering had de 2de beste optmisatie?
+8.3 Hoeveel klokcycli verbetering had de 2de beste optmisatie?
 <#cycli>
 
 8.4 Waarom dacht je dit de beste optimisatie was?
