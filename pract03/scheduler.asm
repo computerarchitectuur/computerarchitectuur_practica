@@ -401,9 +401,18 @@ main:
 	mov  dr7, eax
 	
 	
-        mov  ebx, debughandler
-        push ebx
+        push debughandler
         push 1
+        call install_handler
+        add esp, 8
+
+        ; Spurious IRQ handlers (7 & 15)
+        ; Aangezien noch de printer noch reserved kunnen triggered worden, weten we dat het sws spurious is
+        push irethandler
+        push 39
+        call install_handler
+        add esp, 4
+        push 47
         call install_handler
         add esp, 8
 
@@ -622,53 +631,78 @@ termineertaak: ; Labo 4
 
 ; Slaapt voor (minstens) eax ticks
 sleep:
-        pushfd
-        push    cs
-        push    ebx
-        pushad
-        lea     ebx, [awake]
-        mov     [esp+4*8], ebx
-        mov     ebx, [Current_Task]
-        mov     dword [ebx],esp
-        mov     dword ecx, [Current_Tick]
-        add     eax, ecx
-        mov     dword [ebx + 4], eax
-        mov     edx, 0
-        cli
-        mov     esp, 0
-        jmp     schedulerhandler.tasksearchloop
-awake:
-        ret
+  ; Fake iret
+  pushfd
+  push	cs
+  push	.awake
 
-; Zorg ervoor dat GEEN TAAK geprint wordt als er geen taak gevonden wordt (Labo 4)
+  pushad
+
+  ; 3*4 -> fake iret
+  ; 8*4 -> pushad
+  ; 4   -> eerst argument
+  mov	eax, [esp + 3*4 + 8*4 + 4] ; nr_ticks
+
+  cli
+
+  ; Sla huidige taak stapel op
+  mov	ebx, [Current_Task]
+  mov	dword [ebx], esp
+
+  ; Stel de tick van de huidige taak in op [Current_Tick] + nr_ticks (eax)
+  add     eax, [Current_Tick]
+  mov     [ebx + 4], eax
+
+  ; Kies een nieuwe taak en laad de stapel in
+  call	tasksearch
+  mov     [Current_Task], ebx
+  mov     esp, [ebx]
+
+  popad
+  pop eax
+  iret
+.awake:
+  ret
+
 ; ..............
-schedulerhandler:
-        pushad
-        inc     dword [Current_Tick]
-        mov	al, 0x20
-        out	0x20, al
-        sti
-        mov	ebx, [Current_Task]
-        mov	dword [ebx],esp
-        mov     dword [ebx + 4], 0
-        mov    ecx, [Current_Tick]
-	call	animationstep
-        cli
-        mov     esp, 0
-.tasksearchloop:
-        add	ebx, 8
-        cmp	ebx, tasklist + (MAX_TAKEN * 8)
-        jl	.not_yet_at_the_end
-        lea	ebx, [tasklist]
+; INPUT:   ebx = huidige plaats in de tasklist
+; OUTPUT:  ebx = nieuwe plaats in de tasklist
+; CLOBBER: ecx
+; ASSUMPTION: interrupts are disabled
+tasksearch:
+  mov	ecx, [Current_Tick]
+.loop:
+  add	ebx, 8
+  cmp	ebx, tasklist + (MAX_TAKEN * 8)
+  jl	.not_yet_at_the_end
+  lea	ebx, [tasklist]
 .not_yet_at_the_end:
-        cmp	dword [ebx],0
-        je	.tasksearchloop
-        cmp     dword [ebx+4], ecx
-        jg      .tasksearchloop
-        mov     [Current_Task], ebx
-        mov     esp, [ebx]
-        popad
-        iret
+   cmp	dword [ebx],0
+  je	.loop
+  cmp	dword [ebx+4], ecx
+  jg	.loop
+  ret
+
+schedulerhandler:
+  pushad
+  inc     dword [Current_Tick]
+  call	animationstep
+
+  ; Sla huidige taak stapel op
+  mov	ebx, [Current_Task]
+  mov	dword [ebx], esp
+
+  ; Kies een nieuwe taak en laad de stapel in
+  call	tasksearch
+  mov     [Current_Task], ebx
+  mov     esp, [ebx]
+
+  ; EOI
+  mov al, 0x20
+  out 0x20, al
+
+  popad
+  iret
 
 
 ; Animatie om te zien of schedulerhandler opgeroepen wordt, ook al is er maar 1 taak:
@@ -1058,7 +1092,8 @@ debughandler:
 .debugdone:
     jmp .debugdone
 
-
+irethandler:
+  iret
 
 TotalSize		EQU	$-$$
 TotalSectors		EQU	(TotalSize + SectorSize) / SectorSize
