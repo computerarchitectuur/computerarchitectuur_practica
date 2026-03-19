@@ -650,16 +650,15 @@ sleep:
   mov	dword [ebx], esp
 
   ; Stel de tick van de huidige taak in op [Current_Tick] + nr_ticks (eax)
-  add     eax, [Current_Tick]
-  mov     [ebx + 4], eax
+  add	eax, [Current_Tick]
+  mov	[ebx + 4], eax
 
   ; Kies een nieuwe taak en laad de stapel in
   call	tasksearch
-  mov     [Current_Task], ebx
-  mov     esp, [ebx]
+  mov	[Current_Task], ebx
+  mov	esp, [ebx]
 
   popad
-  pop eax
   iret
 .awake:
   ret
@@ -677,7 +676,7 @@ tasksearch:
   jl	.not_yet_at_the_end
   lea	ebx, [tasklist]
 .not_yet_at_the_end:
-   cmp	dword [ebx],0
+  cmp	dword [ebx],0
   je	.loop
   cmp	dword [ebx+4], ecx
   jg	.loop
