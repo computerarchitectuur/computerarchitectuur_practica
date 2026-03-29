@@ -7,7 +7,7 @@
 ; worden
 ;
 ; de bios begint uit te voeren op adres 000ffff0h (startadres van de 
-; processor, en zal na verloop van tijd de eerste sector (512 bytes)
+; processor), en zal na verloop van tijd de eerste sector (512 bytes)
 ; van het bootstrap device (floppy, harddisk, CD) inlezen.
 ; 
 ; deze sector wordt opgeslagen op adres 7c00h.
@@ -18,13 +18,13 @@
 
 ; constantendefinities
 
-Loaded		EQU	7C00h    ; adres waarop sector 0 geladen wordt
-SectorSize	EQU	512      ; grootte van 1 sector
-;VIDEO_MODE  	EQU   	7        ; monochrome mode
-;VGA_MEM     	EQU   	0xB0000  ; plaats van de videoram voor monochrome mode
-VIDEO_MODE  	EQU   	3        ; kleurmode
-VGA_MEM     	EQU   	0xB8000  ; plaats van de videoram voor kleurmode
-; Wachtlus	EQU	100000
+Loaded		EQU		7C00h		; adres waarop sector 0 geladen wordt
+SectorSize	EQU		512			; grootte van 1 sector
+;VIDEO_MODE	EQU		7			; monochrome mode
+;VGA_MEM	EQU		0xB0000		; plaats van de videoram voor monochrome mode
+VIDEO_MODE	EQU		3			; kleurmode
+VGA_MEM		EQU		0xB8000		; plaats van de videoram voor kleurmode
+; Wachtlus	EQU		100000
 
 
 ; de BIOS voert steeds uit in 16 bit mode. Een van de taken van het programma
@@ -51,8 +51,7 @@ ORG 	7C00h		; adres waarop deze code geladen wordt
 	mov	ds, ax
 	mov	es, ax
 	mov	ss, ax
-	mov	sp, Loaded	; sp wijst net voor de eerste instructie, 
-				; en groeit ervan weg 
+	mov	sp, Loaded	; sp wijst net voor de eerste instructie, en groeit ervan weg 
 
 ; Laad de rest van de sectoren na de eerste sector in het geheugen. 
 ; Hiervoor wordt de BIOS oproep int 13h gebruikt. Daarvoor moeten wel alle 
@@ -97,8 +96,8 @@ load_next:
 ; Met de BIOS-interrupt 10h zetten we de videomode goed.
 ; 25 lijnen van 80 witte tekens met zwarte achtergrond = VGA mode 03h 
 
-        mov	ax, VIDEO_MODE
-        int	10h
+	mov	ax, VIDEO_MODE
+	int	10h
 
 ; Zet motor af
 	xor	al, al		; al = 0
@@ -115,14 +114,14 @@ load_next:
 	mov	al,11h 	; (init. command word 1) ICW1 to both controllers
 	out	20h,al		; bit 0=1: ICW4 needed
 	out	0A0h,al		; bit 1=0: cascaded mode
-				; bit 2=0: call address interval 8 bytes 
-				; bit 3=0: edge triggered mode
-				; bit 4=1: ICW1 is being issued
-				; bit 5-7: not used
+					; bit 2=0: call address interval 8 bytes 
+					; bit 3=0: edge triggered mode
+					; bit 4=1: ICW1 is being issued
+					; bit 5-7: not used
 	mov	al, IRQBase	; ICW2 PIC1 - offset of vectors
 	out	21h,al		; 20h -> right after the intel exceptions
-				; bit 0-2: 000 on 80x86 systems
-				; bit 3-7: A3-A7 of 80x86 interrupt vector
+					; bit 0-2: 000 on 80x86 systems
+					; bit 3-7: A3-A7 of 80x86 interrupt vector
 
 	mov	al, IRQBase+8 	; ICW2 PIC2 - offset of vectors
 	out	0A1h,al		; 28h -> after PIC1 vectors
@@ -135,13 +134,13 @@ load_next:
 		
 	mov	al,1h		; ICW4 to both controllers
 	out	21h,al		; bit 0=1: 8086 mode
-				; bit 1=0: no auto EOI, so normal EOI
+					; bit 1=0: no auto EOI, so normal EOI
 	out	0A1h,al		; bit 2-3=00: nonbuffered mode
-				; bit 4:0=sequential, bit 5-7: reserved
+					; bit 4:0=sequential, bit 5-7: reserved
 		
 	mov	al,0ffh		; OCW1 interrupt mask to both
 	out	21h,al		; no interrupts enabled
-	out	0A1h,al  
+	out	0A1h,al
 
 ; Zet de Global Descriptor Tabel (GDT) goed zodat we cs, ds, es, ss kunnen
 ; vullen met een segment selector die wijst naar het gehele adresbereik.
@@ -179,13 +178,13 @@ BITS 32
 %endif
 
 TIMES 	SectorSize-2-($-$$) DB 0 ; Zorg dat de boot sector 512 bytes lang is 
-	DW 	0xAA55  ; Verplichte signatuur van de bootsector 
+DW 	0xAA55  ; Verplichte signatuur van de bootsector 
 			; hieraan herkent de BIOS een bootsector
 
 ;============================ SECOND STAGE SECTION ============================ 
 SecondStage:	; de eerste bootsector zal op dit adres de volgende
-		; sectoren inladen met onderstaande code en data
-		; deze sectoren beginnen in principe op Loaded+SectorSize
+				; sectoren inladen met onderstaande code en data
+				; deze sectoren beginnen in principe op Loaded+SectorSize
 
 
 ;-----------------------------------------------------------------------------;
@@ -202,25 +201,25 @@ NULLDesc	:
 	dd 	0, 0		; null descriptor  (wordt niet gebruikt)
 CodeDesc:
 	dw 	0FFFFh		; code limit 0 - 15
-	dw 	0		; code base 0 - 15
-	db 	0		; code base 16 - 23
+	dw 	0			; code base 0 - 15
+	db 	0			; code base 16 - 23
 	db 	10011010b	; present, dpl=00, 1, code=1, cnf.=0, r=1, ac=0
 	db 	11001111b	; gran=1, use32=1, 0, 0, limit 16 - 19
-	db 	0		; code base 24 - 31
+	db 	0			; code base 24 - 31
 DataDesc:	
 	dw 	0FFFFh		; data limit 0 - 15
-	dw 	0		; data base 0 - 15
-	db 	0		; data base 16 - 23
+	dw 	0			; data base 0 - 15
+	db 	0			; data base 16 - 23
 	db 	10010010b	; present, dpl=00, 10, exp.d.=0, wrt=1, ac=0
 	db 	11001111b	; gran=1, big=1, 0, 0, limit 16 - 19
-	db 	0		; data base 24 - 31			
+	db 	0			; data base 24 - 31			
 StackDesc:	
-	dw 	0		; data limit 0 - 15
-	dw 	0		; data base 0 - 15
-	db 	0		; data base 16 - 23
+	dw 	0			; data limit 0 - 15
+	dw 	0			; data base 0 - 15
+	db 	0			; data base 16 - 23
 	db 	10010110b	; present, dpl=00, 10, exp.d.=1, wrt=1, ac=0
 	db 	11000000b	; gran=1, big=1, 0, 0, limit 16 - 19
-	db 	0		; data base 24 - 31			
+	db 	0			; data base 24 - 31			
 GDTEnd:	
 
 GDTInfo:					   ; inhoud van GDTR
@@ -293,8 +292,8 @@ IDTEnd:
 
 IRQBase		EQU	32
 
-IDTInfo:		; Inhoud van IDTR
-IDTLimit 	dw	IDTEnd-IDTStart-1 ; limit = offset hoogste byte	
+IDTInfo:			; Inhoud van IDTR
+IDTLimit 	dw		IDTEnd-IDTStart-1 ; limit = offset hoogste byte	
 IDTBase 	dd      IDTStart
 
 ;------------------------------------------------------------------------------
@@ -357,21 +356,21 @@ main:
 ; Timer aanpassen (voor practicum 4)
 ;------------------------------------------------------------------------------
 
-        ; Verhoog het aantal HZ van de PIT zijn standaardwaarde van 18.2Hz naar 100Hz:
-        ; Port 40h -> system time counter divisor
-        ; Port 43h -> control word register
+	; Verhoog het aantal HZ van de PIT zijn standaardwaarde van 18.2Hz naar 100Hz:
+	; Port 40h -> system time counter divisor
+	; Port 43h -> control word register
 
-        ; (00) counter 0 select (11) read/write counter bits 0-7 first, then 8-15 (x11) counter mode: square (0) binary counter
-        mov     al, 00110110b
-        out     43h, al
+	; (00) counter 0 select (11) read/write counter bits 0-7 first, then 8-15 (x11) counter mode: square (0) binary counter
+	mov     al, 00110110b
+	out     43h, al
 
-        ; bits 0-7
-        mov     al, 00h
-        out     40h, al
-        ; bits 8-15
-        mov     al, 00fh ; ~ 1000Hz? ### Check
-        out     40h, al
-        ; zet de onderbrekingen terug aan
+	; bits 0-7
+	mov     al, 00h
+	out     40h, al
+	; bits 8-15
+	mov     al, 00fh ; ~ 1000Hz? ### Check
+	out     40h, al
+	; zet de onderbrekingen terug aan
 	sti
 
 ;------------------------------------------------------------------------------
@@ -399,18 +398,25 @@ main:
 
 	mov  dr7, eax
 	
-	
-        mov  ebx, debughandler
-        push ebx
-        push 1
-        call install_handler
-        add esp, 8
+	push debughandler
+	push 1
+	call install_handler
+	add esp, 8
 
+	; Spurious IRQ handlers (7 & 15)
+	; Aangezien noch de printer noch reserved kunnen triggered worden, weten we dat het sws spurious is
+	push irethandler
+	push 39
+	call install_handler
+	add esp, 4
+	push 47
+	call install_handler
+	add esp, 8
 
-        ; We gaan over naar een voorgedefinieerde stapel en stoppen het hoofdprogramma in de lijst
-        lea     esp, [mainstapel + STACKSIZE]
-        mov     dword [tasklist], esp
-        mov     dword [Current_Task], tasklist
+	; We gaan over naar een voorgedefinieerde stapel en stoppen het hoofdprogramma in de lijst
+	lea     esp, [mainstapel + STACKSIZE]
+	mov     dword [tasklist], esp
+	mov     dword [Current_Task], tasklist
 
 	; installeer de schedulerhandler op de timeronderbreking en zet deze onderbreking aan
 	push	schedulerhandler
@@ -418,11 +424,11 @@ main:
 	call	install_handler
 	add	esp, 0x8
 	;; zet onderbreking aan
-        cli
+	cli
 	in	al, 0x21
 	and	al, 11111110b
 	out	0x21, al
-        sti
+	sti
 
 
 ; .............
@@ -430,10 +436,10 @@ main:
 ; Start de taken
 ; .............
 
-    ;; Vraag 3: IdleTaak aanmaken
+	;; Vraag 3: IdleTaak aanmaken
 
-    ; ..............
-    
+	; ..............
+	
 	;; installeer taak1
 	push	0
 	push	stapel1
@@ -450,27 +456,23 @@ main:
 	
 	;; Vraag 5 & 6: terminatetask oproepen
 
-
-  ;; Vraag 6: een aparte taak hiervan maken
-
+	;; Vraag 6: een aparte taak hiervan maken
 
 	;; De hoofd-taak gaat gewoon PrintInfoTask direct uitvoeren
 	jmp PrintInfoTask
 
 	;; Zolang de jmp PrintInfoTask gedaan wordt, gaat dit niet uitgevoerd worden
 HoofdProgrammaGedaan:
-        jmp     HoofdProgrammaGedaan
+	jmp     HoofdProgrammaGedaan
 
 
 ;================================= TAKEN ==============================
 Task1:
-        mov     eax, 0
-        mov     ebx, 39
-        mov     ecx, 1
-        mov     edx, 9
-        jmp     spiraal
-
-
+	mov     eax, 0
+	mov     ebx, 39
+	mov     ecx, 1
+	mov     edx, 9
+	jmp     spiraal
 
 Task2:
 	mov	eax,40	
@@ -479,13 +481,12 @@ Task2:
 	mov	edx,9
 	jmp	spiraal
 
-
 Taak3:
-        mov     eax, 0
-        mov     ebx, 79
-        mov     ecx, 11
-        mov     edx, 20
-        jmp     spiraal
+	mov     eax, 0
+	mov     ebx, 79
+	mov     ecx, 11
+	mov     edx, 20
+	jmp     spiraal
 
 
 clockstring  db "Clockticks:", 0
@@ -493,147 +494,147 @@ tscstring    db "TSC: ", 0
 takenstring  db "Taken: ", 0
 
 PrintInfoTask:
-  ; Print informatie op het scherm
-  push  21
-  push  0
-  push  clockstring
-  call  printstring
-  add   esp, 12
+	; Print informatie op het scherm
+	push  21
+	push  0
+	push  clockstring
+	call  printstring
+	add   esp, 12
 
-  push  21
-  push  22
-  push  tscstring
-  call  printstring
-  add   esp, 12
+	push  21
+	push  22
+	push  tscstring
+	call  printstring
+	add   esp, 12
 
-  push  22
-  push  0
-  push  takenstring
-  call  printstring
-  add   esp, 12
+	push  22
+	push  0
+	push  takenstring
+	call  printstring
+	add   esp, 12
 
-  ; Print de labels voor de taken:
-  mov   edi, 0
+	; Print de labels voor de taken:
+	mov   edi, 0
 .printLabels:
-  mov   eax, 13
-  imul  edi
-  add   eax, 7
+	mov   eax, 13
+	imul  edi
+	add   eax, 7
 
-  ; Taaknummer
+	; Taaknummer
 
-  push  eax
-  push  edi
+	push  eax
+	push  edi
 
-  push  22
-  push  eax
-  push  edi
+	push  22
+	push  eax
+	push  edi
 
-  add   eax, 1
-  push  word 22
-  push  ax
-  push  word ':'
+	add   eax, 1
+	push  word 22
+	push  ax
+	push  word ':'
 
-  add   eax, 2
-  push  word 22
-  push  ax
-  push  word ','
+	add   eax, 2
+	push  word 22
+	push  ax
+	push  word ','
 
-  call  printchar
-  call  printchar
-  call  printint
-  add   esp, 12
+	call  printchar
+	call  printchar
+	call  printint
+	add   esp, 12
 
-  pop   edi
-  pop   eax
+	pop   edi
+	pop   eax
 
-  add   edi, 1
+	add   edi, 1
 
-  cmp   edi, MAX_TAKEN
-  jl    .printLabels
-  jmp   PrintInfoTaskLoop
+	cmp   edi, MAX_TAKEN
+	jl    .printLabels
+	jmp   PrintInfoTaskLoop
 
 PrintInfoTaskLoop:
-  ; Print Tijd-Info
-  push  21
-  push  13
-  push  dword [Current_Tick]
-  call  printhex
-  add   esp, 12
+	; Print Tijd-Info
+	push  21
+	push  13
+	push  dword [Current_Tick]
+	call  printhex
+	add   esp, 12
 
-  push  21
-  push  28
-  rdtsc
-  push  edx
-  push  21
-  push  36
-  push  eax
-  call  printhex
-  add   esp, 12
-  call  printhex
-  add   esp, 12
+	push  21
+	push  28
+	rdtsc
+	push  edx
+	push  21
+	push  36
+	push  eax
+	call  printhex
+	add   esp, 12
+	call  printhex
+	add   esp, 12
 
-  ; Print taken-info:
-  lea   esi, [tasklist]
-  mov   ecx, 0
-.printTaken:
-  imul  edx, ecx, 8
-  mov   dword ebx, [esi+edx]
-  ; Startpos op scherm
-  mov   eax, 13
-  imul  ecx
+	; Print taken-info:
+	lea   esi, [tasklist]
+	mov   ecx, 0
+	.printTaken:
+	imul  edx, ecx, 8
+	mov   dword ebx, [esi+edx]
+	; Startpos op scherm
+	mov   eax, 13
+	imul  ecx
 
-  push  esi
-  push  ecx
-  push  ebx
+	push  esi
+	push  ecx
+	push  ebx
 
-  add   eax, 11
+	add   eax, 11
 
-  ; Toon activatietijd (ook invullen indien taak getermineerd)
-  push  22
-  push  eax
-  imul  edx, ecx, 8
-  push  dword [esi+edx+4]
+	; Toon activatietijd (ook invullen indien taak getermineerd)
+	push  22
+	push  eax
+	imul  edx, ecx, 8
+	push  dword [esi+edx+4]
 
-  add   eax, -2
-  ; Toon status: A = Actief, T = geTermineerd
-  cmp   ebx, 0
-  je    .printgeTermineerd
+	add   eax, -2
+	; Toon status: A = Actief, T = geTermineerd
+	cmp   ebx, 0
+	je    .printgeTermineerd
 
-  push   word 22
-  push   ax
-  push   word 'A'
+	push   word 22
+	push   ax
+	push   word 'A'
 
-  jmp    .nextTaak
+	jmp    .nextTaak
 
 .printgeTermineerd:
-  push   word 22
-  push   ax
-  push   word 'T'
+	push   word 22
+	push   ax
+	push   word 'T'
 
-  jmp   .nextTaak
+	jmp   .nextTaak
 
-.nextTaak:
-  call   printchar
-  call   printhex
-  add   esp, 12
+	.nextTaak:
+	call   printchar
+	call   printhex
+	add   esp, 12
 
-  pop    ebx
-  pop    ecx
-  pop    esi
+	pop    ebx
+	pop    ecx
+	pop    esi
 
-  add   ecx, 1
-  cmp   ecx, MAX_TAKEN
-  jl    .printTaken
+	add   ecx, 1
+	cmp   ecx, MAX_TAKEN
+	jl    .printTaken
 
-  ; Vraag 1
-  ; .......
+	; Vraag 1
+	; .......
 
-  jmp   PrintInfoTaskLoop
+	jmp   PrintInfoTaskLoop
 
 
 ; Wordt gebruikt in vraag 3
 IdleTaak:
-        jmp     IdleTaak
+	jmp     IdleTaak
 
 
 ;================================= SCHEDULING ==============================
@@ -643,7 +644,7 @@ createtask:
 ; voeg een taak toe aan de tasklist
 ; oproepen als createtask(adres, stapel, wachttijd)
 ; ....................
-		mov	eax, [esp+4]	; adres
+	mov	eax, [esp+4]	; adres
 	mov	ecx, [esp+8]	; stapel
 	mov	edx, [esp+12]	; wachttijd
 	;; initalisatie van de stapel
@@ -674,12 +675,12 @@ createtask:
 	push	dword 0		; esi
 	push	dword 0		; edi
 	;; initialisatie van de tasklist:
-        cli
-        lea	ecx, [tasklist - 8]
+	cli
+	lea	ecx, [tasklist - 8]
 .leegzoeklus:
-        add	ecx, 8
-        cmp	dword [ecx], 0
-        jne	.leegzoeklus
+	add	ecx, 8
+	cmp	dword [ecx], 0
+	jne	.leegzoeklus
 	; plaats de correct esp in de tasklist
 	mov	dword[ecx], esp
  	; plaats de correcte tijd in de tasklist
@@ -710,61 +711,85 @@ terminatetask:
 ; ....................
 
 
-; sleep(nr_ticks): Slaapt voor (minstens) nr_ticks ticks
-sleep:
-        push eax
-        mov eax, [esp+8]
-        pushad ; Do not clobber any registers
-        pushfd
-        push    cs
-        push    ebx
-        pushad
-        lea     ebx, [awake]
-        mov     [esp+4*8], ebx
-        mov     ebx, [Current_Task]
-        cli
-        mov     dword [ebx],esp
-        mov     dword ecx, [Current_Tick]
-        add     eax, ecx
-        mov     dword [ebx + 4], eax
-        jmp     schedulerhandler.tasksearchloop
-awake:
-        popad
-        pop eax
-        ret
-
-change_current_priority:
-;; Niet gebruikt dit jaar
 ; change_current_priority(new_priority)
+change_current_priority:
+	;; Niet gebruikt dit jaar
+	; ..............
+
+; Slaapt voor (minstens) eax ticks
+sleep:
+	; Fake iret
+	pushfd
+	push	cs
+	push	.awake
+
+	pushad
+
+	; 3*4 -> fake iret
+	; 8*4 -> pushad
+	; 4   -> eerst argument
+	mov	eax, [esp + 3*4 + 8*4 + 4] ; nr_ticks
+
+	cli
+
+	; Sla huidige taak stapel op
+	mov	ebx, [Current_Task]
+	mov	dword [ebx], esp
+
+	; Stel de tick van de huidige taak in op [Current_Tick] + nr_ticks (eax)
+	add	eax, [Current_Tick]
+	mov	[ebx + 4], eax
+
+	; Kies een nieuwe taak en laad de stapel in
+	call	tasksearch
+	mov	[Current_Task], ebx
+	mov	esp, [ebx]
+
+	popad
+	iret
+.awake:
+	ret
+
 ; ..............
+; INPUT:   ebx = huidige plaats in de tasklist
+; OUTPUT:  ebx = nieuwe plaats in de tasklist
+; CLOBBER: ecx
+; ASSUMPTION: interrupts are disabled
+tasksearch:
+	mov	ecx, [Current_Tick]
+.loop:
+	add	ebx, 8
+	cmp	ebx, tasklist + (MAX_TAKEN * 8)
+	jl	.not_yet_at_the_end
+	lea	ebx, [tasklist]
+.not_yet_at_the_end:
+	cmp	dword [ebx],0
+	je	.loop
+	cmp	dword [ebx+4], ecx
+	jg	.loop
+	ret
 
 ; Aanpassen in Vraag 2 en vraag 4
 schedulerhandler:
-        pushad
-        inc     dword [Current_Tick]
-        mov	al, 0x20
-        out	0x20, al
-        sti
-        mov	ebx, [Current_Task]
-        mov	dword [ebx],esp
-        mov     dword [ebx + 4], 0
-        mov    ecx, [Current_Tick]
+	pushad
+	inc     dword [Current_Tick]
 	call	animationstep
-        cli
-.tasksearchloop:
-        add	ebx, 8
-        cmp	ebx, tasklist + (MAX_TAKEN * 8)
-        jl	.not_yet_at_the_end
-        lea	ebx, [tasklist]
-.not_yet_at_the_end:
-        cmp	dword [ebx],0
-        je	.tasksearchloop
-        cmp     dword [ebx+4], ecx
-        jg      .tasksearchloop
-        mov     [Current_Task], ebx
-        mov     esp, [ebx]
-        popad
-        iret
+
+	; Sla huidige taak stapel op
+	mov	ebx, [Current_Task]
+	mov	dword [ebx], esp
+
+	; Kies een nieuwe taak en laad de stapel in
+	call	tasksearch
+	mov     [Current_Task], ebx
+	mov     esp, [ebx]
+
+	; EOI
+	mov al, 0x20
+	out 0x20, al
+
+	popad
+	iret
 
 
 ; Animatie om te zien of schedulerhandler opgeroepen wordt, ook al is er maar 1 taak:
@@ -774,25 +799,25 @@ ANIMATIE_FRAME db "/", 0
 CHECK_FAIL db "Check FAIL: ", 0
 
 animationstep:
-pushad
-cmp	byte [ANIMATIE_FRAME], '/'
-je	animatie_1
-cmp	byte [ANIMATIE_FRAME], '-'
-je	animatie_2
-cmp	byte [ANIMATIE_FRAME], '\'
-je	animatie_3
-cmp	byte [ANIMATIE_FRAME], '|'
-je	animatie_4
+	pushad
+	cmp	byte [ANIMATIE_FRAME], '/'
+	je	animatie_1
+	cmp	byte [ANIMATIE_FRAME], '-'
+	je	animatie_2
+	cmp	byte [ANIMATIE_FRAME], '\'
+	je	animatie_3
+	cmp	byte [ANIMATIE_FRAME], '|'
+	je	animatie_4
 
-; Dit mag niet gebeuren!!!
-push ANIM_Y
-push ANIM_X
-push CHECK_FAIL
-call printstring
-; Gedaan! Loop oneindig!
-checkfailed_loop:
-jmp checkfailed_loop
+	; Dit mag niet gebeuren!!!
+	push ANIM_Y
+	push ANIM_X
+	push CHECK_FAIL
+	call printstring
 
+	; Gedaan! Loop oneindig!
+	checkfailed_loop:
+	jmp checkfailed_loop
 
 animatie_1:
 	mov byte [ANIMATIE_FRAME], '-'
@@ -808,14 +833,12 @@ animatie_4:
 	jmp animatie_end
 
 animatie_end:
-
-push word ANIM_Y
-push word ANIM_X
-push word [ANIMATIE_FRAME]
-call printchar
-popad
-
-ret
+	push word ANIM_Y
+	push word ANIM_X
+	push word [ANIMATIE_FRAME]
+	call printchar
+	popad
+	ret
 
 ;================================= HULPFUNCTIES ==============================
 
@@ -830,7 +853,7 @@ install_handler:
 	mov 	word [IDTStart+8*eax+0], dx ; onderste 16 bits van offset
 	mov 	word [IDTStart+8*eax+2], CodeSegmentSelector 
 	mov 	byte [IDTStart+8*eax+4], 0h ;
-	mov 	byte [IDTStart+8*eax+5], 10001110b ; 1=present, dpl=00, 0, 1=32bits, 110 
+	mov 	byte [IDTStart+8*eax+5], 10001110b ; 1=present, dpl=00, 0, 1=32bits, 110 (interrupt gate)
 	shr 	edx, 16
 	mov 	word [IDTStart+8*eax+6], dx ; bovenste 16 bits van offset
  	ret
@@ -948,7 +971,7 @@ hex:	mov     [ebp-12+ecx],dl
 ;
 
 ShortDelay:
-        ; ..... Vraag 1
+	; ..... Vraag 1
 	ret
 
 ; --------------------
@@ -1025,35 +1048,36 @@ einde	ret
 ; deze routine termineert nooit (blijft steeds maar spiralen tekenen).
 
 spiraal:
-        shl     eax,16
-        shl     ebx,16
-        shl     ecx,16
-        shl     edx,16
+	shl     eax,16
+	shl     ebx,16
+	shl     ecx,16
+	shl     edx,16
 	mov	si,' '
 herstart:
 	cmp	si,' '
 	je	letters
 	mov	si,' '
 	jmp	eindelus
-letters:mov	si,'A'
-eindelus: 
-        mov	edi,eax
+letters:
+	mov	si,'A'
+eindelus:
+	mov	edi,eax
 	shr	edi,16
 	mov	ax,di
 
-        mov	edi,ebx
+	mov	edi,ebx
 	shr	edi,16
 	mov	bx,di
 
-        mov	edi,ecx
+	mov	edi,ecx
 	shr	edi,16
 	mov	cx,di
 
-        mov	edi,edx
+	mov	edi,edx
 	shr	edi,16
 	mov	dx,di
 lus1:	
-        mov     di,ax
+	mov     di,ax
 	cmp	di,bx
 	jg	herstart
 lus2:	
@@ -1066,11 +1090,12 @@ lus2:
 	inc	di
 	cmp	di,bx
 	jle	lus2
-        inc     cx
+	inc     cx
 	mov	di,cx
 	cmp     di,dx
 	jg	herstart
-lus3:	push	di
+lus3:
+	push	di
 	push	bx
 	push	si
 	call	printchar
@@ -1079,11 +1104,12 @@ lus3:	push	di
 	inc	di
 	cmp	di,dx
 	jle	lus3
-        dec     bx
-        mov     di,bx
+	dec     bx
+	mov     di,bx
 	cmp     di,ax
 	jl	herstart
-lus4:	push	dx
+lus4:
+	push	dx
 	push	di
 	push	si
 	call	printchar
@@ -1093,10 +1119,11 @@ lus4:	push	dx
 	cmp	di,ax
 	jge	lus4
 	dec     dx
-        mov     di,dx
+	mov     di,dx
 	cmp     di,cx
 	jl	herstart
-lus5:	push	di
+lus5:
+	push	di
 	push	ax
 	push	si
 	call	printchar
@@ -1105,55 +1132,55 @@ lus5:	push	di
 	dec	di
 	cmp	di,cx
 	jge	lus5
-        inc	ax
-        jmp     lus1    
+	inc	ax
+	jmp     lus1    
 
 
 debuggingstring1 db " Een stack gaat buiten het vooraf gedefinieerde gebied! ", 0
 debuggingstring2 db " ESP: ", 0
 debuggingstring3 db " EIP: ", 0
 debughandler:
-;jmp debughandler
-; timer afzetten, of staat die al af nu met deze interupt? ### TODO
-;ud2
-    push 0
-    push 0
-    push debuggingstring1
-    push 1
-    push 0
-    push debuggingstring2
-    push 2
-    push 0
-    push debuggingstring3
+	; Interrupts staan uit omdat install_handler een interrupt gate registreert
+	push 0
+	push 0
+	push debuggingstring1
+	push 1
+	push 0
+	push debuggingstring2
+	push 2
+	push 0
+	push debuggingstring3
 
-    call printstring
-    add   esp, 12
-    call printstring
-    add   esp, 12
-    call printstring
-    add   esp, 12
+	call printstring
+	add   esp, 12
+	call printstring
+	add   esp, 12
+	call printstring
+	add   esp, 12
 
-    mov eax, esp
-    add eax, 3*4
-    push 1
-    push 6
-    push eax
-    call printhex
-    add   esp, 12
+	mov eax, esp
+	add eax, 3*4
+	push 1
+	push 6
+	push eax
+	call printhex
+	add   esp, 12
 
-    push 2
-    push 6
-    mov eax, [esp+8]
-    push eax
-    call printhex
-    add   esp, 12
+	push 2
+	push 6
+	mov eax, [esp+8]
+	push eax
+	call printhex
+	add   esp, 12
 
 .debugdone:
-    jmp .debugdone
+	jmp .debugdone
+
+irethandler:
+	iret
 
 
-
-TotalSize		EQU	$-$$
+TotalSize			EQU	$-$$
 TotalSectors		EQU	(TotalSize + SectorSize) / SectorSize
 SectorsToLoad		EQU	TotalSectors - 1 
 	; TotalSectors - 1 want BIOS heeft de eerste voor ons reeds geladen
