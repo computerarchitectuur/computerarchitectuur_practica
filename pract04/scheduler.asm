@@ -576,7 +576,7 @@ PrintInfoTaskLoop:
 	; Print taken-info:
 	lea   esi, [tasklist]
 	mov   ecx, 0
-	.printTaken:
+.printTaken:
 	imul  edx, ecx, 8
 	mov   dword ebx, [esi+edx]
 	; Startpos op scherm
@@ -613,7 +613,7 @@ PrintInfoTaskLoop:
 
 	jmp   .nextTaak
 
-	.nextTaak:
+.nextTaak:
 	call   printchar
 	call   printhex
 	add   esp, 12
@@ -816,7 +816,7 @@ animationstep:
 	call printstring
 
 	; Gedaan! Loop oneindig!
-	checkfailed_loop:
+checkfailed_loop:
 	jmp checkfailed_loop
 
 animatie_1:
