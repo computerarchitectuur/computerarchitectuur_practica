@@ -1,5 +1,5 @@
 ; 
-; practicum 4 computerarchitectuur
+; practicum 3 computerarchitectuur
 ;
 ; dit programma bestaat uit een beperkt aantal sectoren die ingelezen
 ; worden na het uitvoeren van de BIOS. Dit zijn de eerste sectoren die
@@ -629,7 +629,7 @@ termineertaak: ; Labo 4
 
 ; ....................
 
-; Slaapt voor (minstens) eax ticks
+; Slaapt voor (minstens) nr_ticks ticks
 sleep:
   ; Fake iret
   pushfd

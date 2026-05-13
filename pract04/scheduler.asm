@@ -716,7 +716,7 @@ change_current_priority:
 	;; Niet gebruikt dit jaar
 	; ..............
 
-; Slaapt voor (minstens) eax ticks
+; Slaapt voor (minstens) nr_ticks ticks
 sleep:
 	; Fake iret
 	pushfd
